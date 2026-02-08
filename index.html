@@ -31,8 +31,8 @@
       --warn:#d97706;
       --bad:#e11d48;
 
-      --tbH: 76px;       /* expanded header height */
-      --tbHs: 42px;      /* shrink header height (very small) */
+      --tbH: 82px;   /* expanded header height */
+      --tbHs: 40px;  /* shrink header height */
     }
 
     [data-theme="dark"]{
@@ -82,6 +82,7 @@
       -webkit-overflow-scrolling: touch;
       padding-bottom: 22px;
     }
+    #scrollRoot.lock{ overflow:hidden; }
 
     .wrap{
       max-width: 1200px;
@@ -89,7 +90,7 @@
       padding: 14px 12px 40px;
     }
 
-    /* ======= TOPBAR (NO SHAKE) ======= */
+    /* ======= TOPBAR (FIXED MOBILE ORDER + NO GLITCH) ======= */
     .topbar{
       position: sticky;
       top: 10px;
@@ -102,13 +103,11 @@
       background: linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,.10));
       backdrop-filter: var(--glass);
 
-      /* important: avoid reflow “shake” */
       will-change: height;
-      transition: height .14s ease;
+      transition: height .12s ease;
       overflow: hidden;
       contain: layout paint;
     }
-
     .topbar.shrink{ height: var(--tbHs); }
 
     .topbarInner{
@@ -120,12 +119,7 @@
       padding: 12px 14px;
     }
 
-    /* When shrink, we only scale inner content slightly.
-       Height already shrinks, scale prevents text/button jitter. */
-    .topbar.shrink .topbarInner{
-      padding: 6px 10px;
-    }
-
+    /* no layout reflow animation inside; we scale instead */
     .brand{
       display:flex;
       align-items:center;
@@ -141,11 +135,9 @@
       box-shadow: 0 14px 32px rgba(108,77,255,.18);
       display:grid; place-items:center;
       flex: 0 0 auto;
-      transition: width .14s ease, height .14s ease, border-radius .14s ease;
     }
-    .topbar.shrink .logo{ width: 26px; height: 26px; border-radius: 10px; }
 
-    .brandText{min-width:0; line-height:1.15}
+    .brandText{min-width:0; line-height:1.12}
     .brandText h1{
       margin:0;
       font-size: 18px;
@@ -155,10 +147,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 52vw;
-      transition: font-size .14s ease;
     }
-    .topbar.shrink .brandText h1{ font-size: 12.8px; }
-
     .brandText .sub{
       display:block;
       margin-top: 6px;
@@ -169,12 +158,16 @@
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 52vw;
-      transition: font-size .14s ease, margin-top .14s ease, opacity .14s ease;
     }
-    .topbar.shrink .brandText .sub{
-      font-size: 10.8px;
-      margin-top: 2px;
-      opacity: .92;
+
+    /* Shrink: scale the whole brand area (no font-size transitions = no glitch) */
+    .topbar.shrink .brand{
+      transform: scale(.86);
+      transform-origin: left center;
+    }
+    .topbar.shrink .logo{
+      width: 28px; height: 28px;
+      border-radius: 10px;
     }
 
     .actions{
@@ -196,9 +189,7 @@
       font-size: 12.5px;
       backdrop-filter: var(--glass);
       white-space: nowrap;
-      transition: padding .14s ease, font-size .14s ease;
     }
-    .topbar.shrink .pill{ padding: 6px 8px; font-size: 11px; }
     .pill strong{ color: var(--text); font-weight: 950; }
 
     .btn{
@@ -231,18 +222,39 @@
       background: linear-gradient(135deg, rgba(225,29,72,.14), rgba(255,255,255,.08));
     }
 
-    /* Shrink header buttons: icon-only to avoid mixing with logo */
     .btn .lbl{ display:inline; }
     .btn .ico{ width: 16px; height: 16px; opacity:.95; flex:0 0 auto; }
 
+    /* shrink header buttons = icon-only, keep everything stable */
     .topbar.shrink .btn{
       padding: 6px 10px;
       border-radius: 12px;
-      font-size: 12px;
       gap: 0;
     }
     .topbar.shrink .btn .lbl{ display:none; }
-    .topbar.shrink .btn .ico{ width: 16px; height: 16px; }
+
+    /* On narrow screens, prevent buttons stealing brand space */
+    @media (max-width: 560px){
+      .topbarInner{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 10px 12px;
+      }
+      .topbar{
+        height: calc(var(--tbH) + 54px);
+      }
+      .topbar.shrink{
+        height: var(--tbHs);
+      }
+      .actions{
+        justify-content: space-between;
+      }
+      /* hide “Backend” word on mobile to save space */
+      .pill span{ display:none; }
+      .brandText h1, .brandText .sub{ max-width: 82vw; }
+      .topbar.shrink .brand{ transform: scale(.90); }
+    }
 
     /* ======= LAYOUT ======= */
     .grid{
@@ -286,18 +298,6 @@
       color: var(--text);
       border-color: rgba(108,77,255,.22);
       background: linear-gradient(135deg, rgba(108,77,255,.18), rgba(32,211,255,.10));
-    }
-
-    .sideCard{
-      margin-top:10px;
-      padding: 12px;
-      border-radius: 18px;
-      border:1px solid rgba(127,127,127,.18);
-      background: rgba(255,255,255,.08);
-      color: var(--muted);
-      font-size: 12.5px;
-      line-height: 1.45;
-      font-weight: 650;
     }
 
     .panel-hd{
@@ -380,12 +380,6 @@
     .clickable{ cursor:pointer; }
     .clickable:hover{ background: rgba(255,255,255,.12); }
 
-    .cards2{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
     .cards3{
       display:grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -593,7 +587,7 @@
       line-height: 1.35;
     }
 
-    /* ======= MODALS (fixed header + internal scroll) ======= */
+    /* ======= MODALS (smooth scroll, internal scroll) ======= */
     .modal{
       position:fixed;
       inset:0;
@@ -657,10 +651,11 @@
 
     .modal-bd{
       padding: 12px 14px;
-      overflow:auto;          /* ✅ scroll inside modal */
+      overflow:auto;
       flex: 1 1 auto;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
     }
     .modal-ft{
       padding: 12px 14px;
@@ -697,17 +692,14 @@
       .grid{ grid-template-columns: 1fr; }
       .sidebar{ position: relative; top:auto; }
       .cards{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .cards2{ grid-template-columns: 1fr; }
       .cards3{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 560px){
       .row2{ grid-template-columns: 1fr; }
-
       .cards{ grid-template-columns: 1fr; }
       .cards3{ grid-template-columns: 1fr; }
 
-      /* mobile table -> stacked */
       thead{ display:none; }
       table, tbody, tr, td{ display:block; width:100%; }
       tbody td{ border-bottom:1px solid rgba(127,127,127,.16); }
@@ -719,8 +711,6 @@
         margin-bottom: 4px;
         font-size: 12px;
       }
-
-      .brandText h1, .brandText .sub{ max-width: 46vw; }
       .modal-hd h3{ max-width: 52vw; }
     }
   </style>
@@ -733,7 +723,7 @@
       <!-- TOPBAR -->
       <div class="topbar" id="topbar">
         <div class="topbarInner">
-          <div class="brand">
+          <div class="brand" id="brandArea">
             <div class="logo" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M7 18c2.4 1.3 7.6 1.3 10 0" stroke="rgba(255,255,255,.95)" stroke-width="2" stroke-linecap="round"/>
@@ -821,12 +811,6 @@
           <button class="navbtn" data-view="events">Events</button>
           <button class="navbtn" data-view="unauth">Unauthorized</button>
           <button class="navbtn" data-view="maintenance">Maintenance</button>
-
-          <div class="sideCard">
-            ✅ Cards open lists in scrollable modal<br/>
-            ✅ Today/7/30 usage by user/device<br/>
-            ✅ Online users from running sessions
-          </div>
         </div>
 
         <!-- DASH -->
@@ -842,7 +826,6 @@
             <div class="alert loading show" id="dashLoading">Loading dashboard…</div>
             <div class="alert err" id="dashErr"></div>
 
-            <!-- Main stats -->
             <div class="cards" id="statCards" style="display:none;">
               <div class="card">
                 <div class="k">Total licenses</div>
@@ -876,14 +859,32 @@
               </div>
             </div>
 
-            <!-- Usage cards -->
-            <div class="cards3" id="calcCards" style="display:none;">
+            <!-- Unique users cards (Today / 7 / 30) -->
+            <div class="cards3" id="uniqueCards" style="display:none;">
               <div class="card clickable" id="cardTodayUsers">
                 <div class="k">Today users (unique)</div>
                 <div class="v" id="cTodayUsers">0</div>
                 <div class="badge">Tap to view list</div>
               </div>
+              <div class="card clickable" id="card7Users">
+                <div class="k">Last 7 days users (unique)</div>
+                <div class="v" id="c7Users">0</div>
+                <div class="badge">Tap to view list</div>
+              </div>
+              <div class="card clickable" id="card30Users">
+                <div class="k">Last 30 days users (unique)</div>
+                <div class="v" id="c30Users">0</div>
+                <div class="badge">Tap to view list</div>
+              </div>
+              <div class="card clickable" id="card30Bad">
+                <div class="k">Last 30 days unauth + expired</div>
+                <div class="v" id="c30Bad">0</div>
+                <div class="badge">Tap to view list</div>
+              </div>
+            </div>
 
+            <!-- Usage cards -->
+            <div class="cards3" id="usageCards" style="display:none;">
               <div class="card clickable" id="cardTodayUsage">
                 <div class="k">Today usage (by user/device)</div>
                 <div class="v" id="cTodayUsage">0m</div>
@@ -901,30 +902,11 @@
                 <div class="v" id="cMonthUsage">0h</div>
                 <div class="badge">Tap to view list</div>
               </div>
-            </div>
 
-            <div class="cards3" id="badCards" style="display:none;">
               <div class="card clickable" id="card7Bad">
                 <div class="k">Last 7 days unauth + expired</div>
                 <div class="v" id="c7Bad">0</div>
                 <div class="badge">Tap to view list</div>
-              </div>
-              <div class="card clickable" id="card30Bad">
-                <div class="k">Last 30 days unauth + expired</div>
-                <div class="v" id="c30Bad">0</div>
-                <div class="badge">Tap to view list</div>
-              </div>
-
-              <div class="card">
-                <div class="k">Analytics cache</div>
-                <div class="v" id="cCache">30s</div>
-                <div class="badge">Auto cache window</div>
-              </div>
-
-              <div class="card">
-                <div class="k">Analytics fetch</div>
-                <div class="v" id="cFetch">1000</div>
-                <div class="badge">Max rows per call</div>
               </div>
             </div>
 
@@ -946,7 +928,7 @@
             <div class="alert ok" id="quickOk"></div>
             <div class="alert err" id="quickErr"></div>
 
-            <!-- Recent activity as buttons -->
+            <!-- Activity buttons -->
             <div class="panel" style="margin-top:14px;">
               <div class="panel-hd">
                 <h2>Activity</h2>
@@ -958,7 +940,7 @@
               </div>
               <div class="panel-bd">
                 <div class="small">
-                  These open a scrollable full list (latest first) with a limit selector.
+                  Opens a scrollable full list (latest first) with a limit selector.
                 </div>
               </div>
             </div>
@@ -1161,29 +1143,6 @@
               Your backend does <b>not</b> expose endpoints to delete logs (sessions/events/unauthorised).<br/>
               This page provides safe “copy SQL” templates to run in Supabase SQL editor.
             </div>
-
-            <div class="cards2">
-              <div class="card clickable" id="sqlClear7">
-                <div class="k">SQL: clear last 7 days logs</div>
-                <div class="v">Copy</div>
-                <div class="badge">Sessions + Events</div>
-              </div>
-              <div class="card clickable" id="sqlClear30">
-                <div class="k">SQL: clear last 30 days logs</div>
-                <div class="v">Copy</div>
-                <div class="badge">Sessions + Events</div>
-              </div>
-              <div class="card clickable" id="sqlClearAll">
-                <div class="k">SQL: clear ALL logs</div>
-                <div class="v">Copy</div>
-                <div class="badge" style="border-color:rgba(225,29,72,.25); color:var(--bad)">Danger</div>
-              </div>
-            </div>
-
-            <div class="small" style="margin-top:12px;">
-              If you want “clear logs” inside admin panel, your backend must add routes like:<br/>
-              <span class="mono">DELETE /admin/events</span>, <span class="mono">DELETE /admin/sessions</span>, <span class="mono">DELETE /admin/unauthorised</span>.
-            </div>
           </div>
         </div>
 
@@ -1248,7 +1207,7 @@
           </div>
         </div>
 
-        <div class="modal-bd">
+        <div class="modal-bd" id="listScroll">
           <div class="table-wrap">
             <table id="listTable">
               <thead id="listHead"></thead>
@@ -1278,13 +1237,6 @@
           <div class="alert err show">
             Clearing logs cannot be done from this frontend because your backend does not have delete endpoints for logs.
           </div>
-          <div class="small" style="margin-top:10px;">
-            Options:
-            <ol>
-              <li>Run SQL in Supabase SQL editor (safe templates provided).</li>
-              <li>Or add backend endpoints to delete logs, then this UI can call them.</li>
-            </ol>
-          </div>
         </div>
       </div>
     </div>
@@ -1305,19 +1257,12 @@
       const state = {
         token: null,
         cache: new Map(),
-        last: {
-          stats: null,
-          licenses: [],
-          sessions: [],
-          events: [],
-          unauth: [],
-          analytics: null
-        },
+        last: { stats:null, licenses:[], sessions:[], events:[], unauth:[], analytics:null },
         modalMode: "create",
         modalDevice: null,
         listData: [],
         listMeta: {title:"", type:""},
-        listSource: null // {kind:"sessions|events|unauth", params:{...}}
+        listSource: null
       };
 
       // ===== THEME =====
@@ -1333,30 +1278,55 @@
       setTheme(localStorage.getItem("adminTheme") || "light");
       $("themeBtn").addEventListener("click", toggleTheme);
 
-      // ===== OVERSCROLL HARD STOP (android chrome) =====
+      // ===== MODAL LOCK (fix scroll conflicts) =====
       const scrollEl = $("scrollRoot");
+      function modalOpen(){
+        scrollEl.classList.add("lock");
+      }
+      function modalClose(){
+        scrollEl.classList.remove("lock");
+      }
+      function showModal(id){
+        modalOpen();
+        $(id).classList.add("show");
+      }
+      function hideModal(id){
+        $(id).classList.remove("show");
+        // if no other modal open, unlock
+        const anyOpen = document.querySelector(".modal.show");
+        if(!anyOpen) modalClose();
+      }
+
+      // ===== OVERSCROLL HARD STOP (android chrome) =====
       let lastTouchY = 0;
       scrollEl.addEventListener("touchstart", (e) => {
         if(e.touches && e.touches.length) lastTouchY = e.touches[0].clientY;
       }, {passive:true});
+
       scrollEl.addEventListener("touchmove", (e) => {
+        // IMPORTANT: don't interfere with modal internal scroll
+        if (e.target && e.target.closest && e.target.closest(".modal-card")) return;
+
         if(!e.touches || !e.touches.length) return;
         const y = e.touches[0].clientY;
         const dy = y - lastTouchY;
         lastTouchY = y;
+
         const atTop = scrollEl.scrollTop <= 0;
         const atBottom = scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 1;
         if((atTop && dy > 0) || (atBottom && dy < 0)) e.preventDefault();
       }, {passive:false});
 
-      // ===== TOPBAR SHRINK (no shake) =====
+      // ===== TOPBAR SHRINK (hysteresis prevents glitch) =====
       const topbar = $("topbar");
-      let lastShrink = false;
+      let shrunk = false;
       scrollEl.addEventListener("scroll", () => {
-        const s = scrollEl.scrollTop > 18;
-        if(s !== lastShrink){
-          lastShrink = s;
-          topbar.classList.toggle("shrink", s);
+        const y = scrollEl.scrollTop;
+        // hysteresis: shrink after 36px, unshrink below 18px (prevents rapid toggling)
+        const wantShrink = shrunk ? (y > 18) : (y > 36);
+        if(wantShrink !== shrunk){
+          shrunk = wantShrink;
+          topbar.classList.toggle("shrink", shrunk);
         }
       });
 
@@ -1584,7 +1554,7 @@
         });
       });
 
-      // ===== MODAL LIST =====
+      // ===== LIST MODAL =====
       function openListModal(title, columns, rows, hint, type, source=null){
         state.listMeta = {title, type};
         state.listData = rows || [];
@@ -1611,16 +1581,15 @@
           tbody.appendChild(tr);
         }
 
-        // show limit+refresh if this list is from backend
         const showSource = !!source;
         $("limitWrap").style.display = showSource ? "flex" : "none";
         $("listRefresh").style.display = showSource ? "inline-flex" : "none";
 
-        $("listModal").classList.add("show");
+        showModal("listModal");
       }
 
-      $("listClose").addEventListener("click", () => $("listModal").classList.remove("show"));
-      $("listModal").addEventListener("click", (e) => { if(e.target.id === "listModal") $("listModal").classList.remove("show"); });
+      $("listClose").addEventListener("click", () => hideModal("listModal"));
+      $("listModal").addEventListener("click", (e) => { if(e.target.id === "listModal") hideModal("listModal"); });
 
       $("listExportJson").addEventListener("click", () =>
         download(JSON.stringify(state.listData || [], null, 2), (state.listMeta.type||"list") + ".json", "application/json")
@@ -1681,10 +1650,10 @@
           return r==="unauthorised" || r==="unauthorized" || r==="expired" || r==="inactive";
         }
 
-        // Per user/device aggregator
         function aggRange(startISO, endISO){
           const map = new Map(); // key user|device
           let totalEndedSec = 0;
+
           for(const s of (sessions||[])){
             const device = s.device_id;
             if(!device || !licensedDevices.has(device)) continue;
@@ -1730,21 +1699,19 @@
           const rows = [...map.values()]
             .sort((a,b)=> (b.ended_sec - a.ended_sec) || (b.ended - a.ended) || (b.aborted - a.aborted));
 
-          return { totalEndedSec, rows };
+          // unique users count (by user|device) who had any activity
+          let uniqueCount = 0;
+          for(const r of rows){
+            if((r.ended + r.aborted + r.running) > 0) uniqueCount++;
+          }
+
+          return { totalEndedSec, rows, uniqueCount };
         }
 
-        // today + 7 days + 30 days
         const todayAgg = aggRange(today, today);
         const weekAgg = aggRange(weekStart, today);
         const monthAgg = aggRange(monthStart, today);
 
-        // today unique users who used (any ended/aborted/running) today
-        const todayUsersSet = new Set();
-        for(const r of todayAgg.rows){
-          if((r.ended + r.aborted + r.running) > 0) todayUsersSet.add(r.username + "|" + r.device_id);
-        }
-
-        // Online (running) right now (latest sessions fetched; best effort)
         const onlineRows = [];
         for(const s of (sessions||[])){
           const st = (s.status||"").toLowerCase();
@@ -1761,7 +1728,6 @@
           });
         }
 
-        // unauth+expired for 7/30
         const bad7 = [];
         const bad30 = [];
         for(const e of (events||[])){
@@ -1784,30 +1750,27 @@
         bad7.sort((a,b)=> String(b.time).localeCompare(String(a.time)));
         bad30.sort((a,b)=> String(b.time).localeCompare(String(a.time)));
 
+        function mapRows(rows){
+          return rows.map(x=>({
+            username:x.username, device_id:x.device_id,
+            duration: fmtDuration(x.ended_sec),
+            ended: x.ended, aborted: x.aborted, running: x.running,
+            last_status: x.last_status, last_time: fmtDateTime(x.last_time)
+          }));
+        }
+
         return {
-          todayUsersCount: todayUsersSet.size,
+          todayUsersCount: todayAgg.uniqueCount,
+          weekUsersCount: weekAgg.uniqueCount,
+          monthUsersCount: monthAgg.uniqueCount,
+
           todayTotalEndedSec: todayAgg.totalEndedSec,
           weekTotalEndedSec: weekAgg.totalEndedSec,
           monthTotalEndedSec: monthAgg.totalEndedSec,
 
-          todayRows: todayAgg.rows.map(x=>({
-            username:x.username, device_id:x.device_id,
-            duration: fmtDuration(x.ended_sec),
-            ended: x.ended, aborted: x.aborted, running: x.running,
-            last_status: x.last_status, last_time: fmtDateTime(x.last_time)
-          })),
-          weekRows: weekAgg.rows.map(x=>({
-            username:x.username, device_id:x.device_id,
-            duration: fmtDuration(x.ended_sec),
-            ended: x.ended, aborted: x.aborted, running: x.running,
-            last_status: x.last_status, last_time: fmtDateTime(x.last_time)
-          })),
-          monthRows: monthAgg.rows.map(x=>({
-            username:x.username, device_id:x.device_id,
-            duration: fmtDuration(x.ended_sec),
-            ended: x.ended, aborted: x.aborted, running: x.running,
-            last_status: x.last_status, last_time: fmtDateTime(x.last_time)
-          })),
+          todayRows: mapRows(todayAgg.rows),
+          weekRows: mapRows(weekAgg.rows),
+          monthRows: mapRows(monthAgg.rows),
 
           onlineRows,
           bad7,
@@ -1820,8 +1783,8 @@
         showAlert($("dashErr"), "");
         $("dashLoading").classList.add("show");
         $("statCards").style.display = "none";
-        $("calcCards").style.display = "none";
-        $("badCards").style.display = "none";
+        $("uniqueCards").style.display = "none";
+        $("usageCards").style.display = "none";
 
         try{
           const statsP = cached("stats", {}, () => fetchJSON(authedUrl("/admin/stats")));
@@ -1846,17 +1809,22 @@
           state.last.analytics = analytics;
 
           $("cOnline").textContent = String(analytics.onlineRows.length);
+
           $("cTodayUsers").textContent = String(analytics.todayUsersCount);
+          $("c7Users").textContent = String(analytics.weekUsersCount);
+          $("c30Users").textContent = String(analytics.monthUsersCount);
+
           $("cTodayUsage").textContent = fmtDuration(analytics.todayTotalEndedSec);
           $("cWeekUsage").textContent = fmtDuration(analytics.weekTotalEndedSec);
           $("cMonthUsage").textContent = fmtDuration(analytics.monthTotalEndedSec);
+
           $("c7Bad").textContent = String(analytics.bad7.length);
           $("c30Bad").textContent = String(analytics.bad30.length);
 
           $("dashLoading").classList.remove("show");
           $("statCards").style.display = "grid";
-          $("calcCards").style.display = "grid";
-          $("badCards").style.display = "grid";
+          $("uniqueCards").style.display = "grid";
+          $("usageCards").style.display = "grid";
         }catch(e){
           $("dashLoading").classList.remove("show");
           if(e.status === 401){ showAlert($("dashErr"), "Unauthorized. Logging out…", "err"); setTimeout(logout, 700); return; }
@@ -1877,59 +1845,47 @@
         );
       });
 
-      $("cardTodayUsers").addEventListener("click", () => {
-        const a = state.last.analytics;
-        if(!a) return;
-        // just show the same todayRows but ordered by any activity
-        const rows = (a.todayRows || []).filter(r => (r.ended + r.aborted + r.running) > 0);
+      function openUserList(title, rows, type){
         openListModal(
-          "Today users (unique) details",
+          title,
           ["username","device_id","duration","ended","aborted","running","last_status","last_time"],
-          rows,
-          "Counts include ended/aborted/running sessions today. Duration includes ended sessions only.",
-          "today_users"
+          rows || [],
+          "Duration = ended sessions only. Aborted/running are shown as counts.",
+          type
         );
+      }
+
+      $("cardTodayUsers").addEventListener("click", () => {
+        const a = state.last.analytics; if(!a) return;
+        const rows = (a.todayRows || []).filter(r => (r.ended + r.aborted + r.running) > 0);
+        openUserList("Today users (unique) details", rows, "today_users");
+      });
+      $("card7Users").addEventListener("click", () => {
+        const a = state.last.analytics; if(!a) return;
+        const rows = (a.weekRows || []).filter(r => (r.ended + r.aborted + r.running) > 0);
+        openUserList("Last 7 days users (unique) details", rows, "users_7days");
+      });
+      $("card30Users").addEventListener("click", () => {
+        const a = state.last.analytics; if(!a) return;
+        const rows = (a.monthRows || []).filter(r => (r.ended + r.aborted + r.running) > 0);
+        openUserList("Last 30 days users (unique) details", rows, "users_30days");
       });
 
       $("cardTodayUsage").addEventListener("click", () => {
-        const a = state.last.analytics;
-        if(!a) return;
-        openListModal(
-          "Today usage (by user/device)",
-          ["username","device_id","duration","ended","aborted","running","last_status","last_time"],
-          a.todayRows || [],
-          "Duration = sum of ended sessions. Aborted/running are shown as counts.",
-          "today_usage"
-        );
+        const a = state.last.analytics; if(!a) return;
+        openUserList("Today usage (by user/device)", a.todayRows, "today_usage");
       });
-
       $("card7Usage").addEventListener("click", () => {
-        const a = state.last.analytics;
-        if(!a) return;
-        openListModal(
-          "Last 7 days usage (by user/device)",
-          ["username","device_id","duration","ended","aborted","running","last_status","last_time"],
-          a.weekRows || [],
-          "Duration = sum of ended sessions (last 7 days).",
-          "usage_7days"
-        );
+        const a = state.last.analytics; if(!a) return;
+        openUserList("Last 7 days usage (by user/device)", a.weekRows, "usage_7days");
       });
-
       $("card30Usage").addEventListener("click", () => {
-        const a = state.last.analytics;
-        if(!a) return;
-        openListModal(
-          "Last 30 days usage (by user/device)",
-          ["username","device_id","duration","ended","aborted","running","last_status","last_time"],
-          a.monthRows || [],
-          "Duration = sum of ended sessions (last 30 days).",
-          "usage_30days"
-        );
+        const a = state.last.analytics; if(!a) return;
+        openUserList("Last 30 days usage (by user/device)", a.monthRows, "usage_30days");
       });
 
       $("card7Bad").addEventListener("click", () => {
-        const a = state.last.analytics;
-        if(!a) return;
+        const a = state.last.analytics; if(!a) return;
         openListModal(
           "Last 7 days unauthorised + expired attempts",
           ["device_id","username","result","event","time"],
@@ -1938,10 +1894,8 @@
           "bad_7days"
         );
       });
-
       $("card30Bad").addEventListener("click", () => {
-        const a = state.last.analytics;
-        if(!a) return;
+        const a = state.last.analytics; if(!a) return;
         openListModal(
           "Last 30 days unauthorised + expired attempts",
           ["device_id","username","result","event","time"],
@@ -1951,7 +1905,7 @@
         );
       });
 
-      // Recent activity buttons -> full lists (with modal limit selector)
+      // Recent activity buttons (backend lists)
       $("openUnauthAll").addEventListener("click", async () => {
         const src = {
           kind: "unauth",
@@ -2036,7 +1990,6 @@
 
           showAlert($("quickOk"), msg, "ok");
 
-          // show quick in modal (sessions + events)
           openListModal(
             `Lookup: ${device}`,
             ["type","info"],
@@ -2068,7 +2021,7 @@
         $("mLevel").value = "";
         $("mExpiry").value = "";
         showAlert($("modalErr"), "");
-        $("licModal").classList.add("show");
+        showModal("licModal");
       }
 
       async function openEdit(device){
@@ -2077,7 +2030,7 @@
         state.modalDevice = device;
         $("modalTitle").textContent = "Edit License";
         showAlert($("modalErr"), "");
-        $("licModal").classList.add("show");
+        showModal("licModal");
         try{
           const data = await fetchJSON(authedUrl("/admin/licenses", {device_id: device, limit: 1}));
           const lic = data && data[0];
@@ -2105,9 +2058,9 @@
       }
 
       $("openCreate").addEventListener("click", openCreate);
-      $("modalClose").addEventListener("click", () => $("licModal").classList.remove("show"));
-      $("modalCancel").addEventListener("click", () => $("licModal").classList.remove("show"));
-      $("licModal").addEventListener("click", (e) => { if(e.target.id === "licModal") $("licModal").classList.remove("show"); });
+      $("modalClose").addEventListener("click", () => hideModal("licModal"));
+      $("modalCancel").addEventListener("click", () => hideModal("licModal"));
+      $("licModal").addEventListener("click", (e) => { if(e.target.id === "licModal") hideModal("licModal"); });
 
       $("modalSave").addEventListener("click", async () => {
         showAlert($("modalErr"), "");
@@ -2142,7 +2095,7 @@
               body: JSON.stringify(payload)
             });
           }
-          $("licModal").classList.remove("show");
+          hideModal("licModal");
           state.cache.clear();
           await loadDashboard(true);
           await loadLicenses();
@@ -2355,36 +2308,14 @@
       }
       $("loginBtn").addEventListener("click", login);
 
-      // ===== SQL HELP =====
-      $("openClearHelp").addEventListener("click", () => $("helpModal").classList.add("show"));
-      $("helpClose").addEventListener("click", () => $("helpModal").classList.remove("show"));
-      $("helpModal").addEventListener("click", (e) => { if(e.target.id === "helpModal") $("helpModal").classList.remove("show"); });
-
-      function copyText(t){
-        navigator.clipboard.writeText(t).then(()=> alert("Copied SQL to clipboard."), ()=> alert("Copy failed. Please copy manually."));
-      }
-      $("sqlClear7").addEventListener("click", () => copyText(
-`-- Clear logs from last 7 days (sessions + events)
-DELETE FROM sessions WHERE start_time >= NOW() - INTERVAL '7 days';
-DELETE FROM events WHERE created_at >= NOW() - INTERVAL '7 days';`
-      ));
-      $("sqlClear30").addEventListener("click", () => copyText(
-`-- Clear logs from last 30 days (sessions + events)
-DELETE FROM sessions WHERE start_time >= NOW() - INTERVAL '30 days';
-DELETE FROM events WHERE created_at >= NOW() - INTERVAL '30 days';`
-      ));
-      $("sqlClearAll").addEventListener("click", () => copyText(
-`-- DANGER: Clear ALL logs (sessions + events)
-DELETE FROM sessions;
-DELETE FROM events;`
-      ));
+      // ===== HELP MODAL =====
+      $("openClearHelp").addEventListener("click", () => showModal("helpModal"));
+      $("helpClose").addEventListener("click", () => hideModal("helpModal"));
+      $("helpModal").addEventListener("click", (e) => { if(e.target.id === "helpModal") hideModal("helpModal"); });
 
       // ===== INIT =====
       (async function init(){
         $("mExpiry").min = todayISO();
-        $("cCache").textContent = String(CACHE_MS/1000) + "s";
-        $("cFetch").textContent = String(ANALYTICS_LIMIT);
-
         setBackendLine("Connecting…");
         await pingBackend();
 
@@ -2404,7 +2335,6 @@ DELETE FROM events;`
           showView("dash");
         }
       })();
-
     })();
     </script>
   </div>
