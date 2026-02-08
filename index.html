@@ -2,90 +2,113 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Golf Licenses Admin</title>
-
   <style>
-    body { margin:0; font-family: system-ui, Arial, sans-serif; background:#0b1220; color:#e6edf3; }
-    header { background:#0f1b33; border-bottom:1px solid #22314f; }
-    .wrap { max-width:1100px; margin:auto; padding:16px; }
-    h1 { margin:0; font-size:18px; }
-    .muted { color:#9fb1c7; font-size:12px; }
-    .card { background:#0f1b33; border:1px solid #22314f; border-radius:14px; padding:16px; margin-top:14px; }
-    input, select, button {
-      background:#0b1220; color:#e6edf3;
-      border:1px solid #22314f; border-radius:10px;
-      padding:10px 12px;
-    }
-    button { cursor:pointer; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; }
-    .row > * { flex:1; min-width:200px; }
-    pre { background:#0b1220; padding:12px; border-radius:10px; overflow:auto; }
-    .pill { display:inline-block; padding:4px 10px; border-radius:999px; border:1px solid #22314f; margin:4px; }
+    body { font-family: system-ui, Arial; margin: 0; background:#0b1020; color:#e8ecff; }
+    header { padding:16px; border-bottom:1px solid rgba(255,255,255,.1); display:flex; gap:10px; align-items:center; }
+    .badge { padding:4px 10px; border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:12px; opacity:.9;}
+    main { padding:16px; max-width:1100px; margin:0 auto; }
+    .grid { display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 14px; }
+    input, select, button, textarea { width:100%; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.25); color:#e8ecff; }
+    button { cursor:pointer; background:#5b5cff; border:none; font-weight:600; }
+    button.secondary { background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); }
+    table { width:100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding:10px; border-bottom: 1px solid rgba(255,255,255,.12); vertical-align: top; }
+    th { text-align:left; opacity:.85; }
+    .row { display:flex; gap:10px; flex-wrap: wrap; }
+    .row > div { flex: 1 1 220px; }
+    .muted { opacity:.75; font-size: 13px; }
+    .pill { display:inline-block; padding: 3px 10px; border-radius:999px; font-size:12px; border:1px solid rgba(255,255,255,.18); }
+    .ok { border-color: rgba(0,255,130,.35); color: #b7ffd8;}
+    .warn { border-color: rgba(255,200,0,.35); color: #ffe7a3;}
+    .bad { border-color: rgba(255,80,80,.35); color: #ffb9b9;}
+    .footer { opacity:.7; padding: 16px; text-align:center; }
+    code { background: rgba(255,255,255,.08); padding:2px 6px; border-radius: 6px; }
   </style>
 </head>
-
 <body>
-<header>
-  <div class="wrap">
-    <h1>Golf License Admin</h1>
-    <div class="muted">GitHub Pages UI → Railway API → Supabase DB</div>
-  </div>
-</header>
+  <header>
+    <div style="font-weight:800;">Golf Licenses Admin</div>
+    <span class="badge">GitHub Pages</span>
+    <span class="badge" id="apiBadge">API: not set</span>
+  </header>
 
-<div class="wrap">
+  <main>
+    <div class="grid">
+      <div class="card">
+        <h3 style="margin:0 0 10px 0;">1) Connect</h3>
+        <div class="row">
+          <div>
+            <label class="muted">Backend API base URL</label>
+            <input id="apiBase" placeholder="https://golf-licenses-production.up.railway.app" />
+            <div class="muted" style="margin-top:8px;">Must be your Railway backend URL.</div>
+          </div>
+          <div>
+            <label class="muted">Admin Token</label>
+            <input id="adminToken" placeholder="paste ADMIN_TOKEN here" />
+            <div class="muted" style="margin-top:8px;">This stays in your browser only.</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button id="btnSave">Save</button>
+          <button class="secondary" id="btnTest">Test Connection</button>
+        </div>
+        <div id="connectMsg" class="muted" style="margin-top:10px;"></div>
+      </div>
 
-  <div class="card">
-    <b>1) Connect</b>
-    <div class="row" style="margin-top:10px">
-      <input id="baseUrl" placeholder="Backend URL" />
-      <input id="token" placeholder="ADMIN_TOKEN" />
-      <button onclick="save()">Save</button>
-      <button onclick="clearSaved()">Clear</button>
+      <div class="card">
+        <h3 style="margin:0 0 10px 0;">2) Quick Stats</h3>
+        <div id="statsBox" class="muted">Connect first, then load stats.</div>
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button id="btnLoadStats">Load Stats</button>
+          <button class="secondary" id="btnLoadEvents">Load Latest Events</button>
+        </div>
+      </div>
     </div>
-    <div id="connMsg" class="muted"></div>
-  </div>
 
-  <div class="card">
-    <b>2) Dashboard</b>
-    <div class="row" style="margin-top:10px">
-      <button onclick="loadStats()">Load Stats</button>
-      <button onclick="loadLicenses()">Load Licenses</button>
-      <button onclick="loadSessions()">Load Sessions</button>
-      <button onclick="loadEvents()">Load Events</button>
+    <div class="card" style="margin-top:12px;">
+      <h3 style="margin:0 0 10px 0;">Licenses</h3>
+      <div class="row">
+        <div>
+          <label class="muted">Search (device_id or username)</label>
+          <input id="searchQ" placeholder="527484932 or username" />
+        </div>
+        <div>
+          <label class="muted">Filter by status</label>
+          <select id="filterStatus">
+            <option value="">All</option>
+            <option value="active">active</option>
+            <option value="inactive">inactive</option>
+            <option value="expired">expired</option>
+          </select>
+        </div>
+        <div>
+          <label class="muted">Filter by level</label>
+          <select id="filterLevel">
+            <option value="">All</option>
+            <option value="lite">lite</option>
+            <option value="premium">premium</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <button id="btnLoadLicenses">Load Licenses</button>
+        <button class="secondary" id="btnNewLicense">New License</button>
+      </div>
+
+      <div id="licensesTable" style="margin-top:12px;"></div>
     </div>
-    <div id="stats"></div>
-  </div>
 
-  <div class="card">
-    <b>3) Add / Update License</b>
-    <div class="row" style="margin-top:10px">
-      <input id="licDevice" placeholder="device_id" />
-      <input id="licUser" placeholder="username" />
-      <select id="licLevel">
-        <option value="lite">lite</option>
-        <option value="premium">premium</option>
-      </select>
-      <input id="licExpiry" placeholder="YYYY-MM-DD" />
-      <select id="licStatus">
-        <option value="active">active</option>
-        <option value="inactive">inactive</option>
-      </select>
+    <div class="card" style="margin-top:12px;">
+      <h3 style="margin:0 0 10px 0;">Latest Events (unauthorised attempts included)</h3>
+      <div id="eventsTable" class="muted">Click “Load Latest Events”.</div>
     </div>
-    <div class="row" style="margin-top:10px">
-      <button onclick="addLicense()">Add</button>
-      <button onclick="updateLicense()">Update</button>
-      <button onclick="deleteLicense()">Delete</button>
-    </div>
-  </div>
 
-  <div class="card">
-    <b>4) Output</b>
-    <pre id="out">No data yet</pre>
-  </div>
+    <div class="footer">If anything shows “401/Forbidden”, your <code>ADMIN_TOKEN</code> in Railway doesn’t match what you pasted here.</div>
+  </main>
 
-</div>
-
-<script src="app.js"></script>
+  <script src="./app.js"></script>
 </body>
-  </html>
+</html>
