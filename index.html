@@ -4,49 +4,77 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Golf License Admin</title>
+
   <style>
     :root{
+      --radius:16px;
+      --radius2:22px;
+      --shadow: 0 12px 28px rgba(0,0,0,.18);
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+
+      /* Theme variables (Light default) */
+      --bg: #f4f6ff;
+      --bg2: #eef2ff;
+      --panel: rgba(255,255,255,.72);
+      --panel2: rgba(255,255,255,.52);
+      --text: #0c1020;
+      --muted: rgba(12,16,32,.62);
+      --line: rgba(12,16,32,.10);
+
+      --brand:#6c4dff;
+      --brand2:#2fd8ff;
+
+      --good:#16a34a;
+      --warn:#d97706;
+      --bad:#e11d48;
+
+      --glass: blur(12px);
+    }
+
+    /* Dark theme overrides */
+    [data-theme="dark"]{
       --bg:#0b1020;
-      --panel:#0f1733;
-      --panel2:#0c132b;
+      --bg2:#0a0f1f;
+      --panel: rgba(18,25,55,.72);
+      --panel2: rgba(18,25,55,.52);
       --text:#e9edff;
       --muted:#a9b2e5;
-      --line: rgba(255,255,255,.08);
-      --brand:#7c5cff;
-      --brand2:#42e8ff;
+      --line: rgba(255,255,255,.10);
+
       --good:#2ee59d;
       --warn:#ffcc66;
       --bad:#ff5c7a;
-      --shadow: 0 12px 28px rgba(0,0,0,.35);
-      --radius:16px;
-      --radius2:22px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
 
-    /* ✅ FIX ANDROID BLUE OVERSCROLL GLOW:
-       body doesn't scroll; our #scrollRoot scrolls */
-    body{
-      margin:0;
-      height:100vh;
-      overflow:hidden;
-      font-family:var(--sans);
-      color:var(--text);
+    /* ✅ Ultra-strong overscroll removal */
+    html, body{
+      overscroll-behavior: none;
+      overflow: hidden;
+      height: 100%;
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
       background:
-        radial-gradient(1200px 800px at 20% 0%, rgba(124,92,255,.35), transparent 60%),
-        radial-gradient(1000px 700px at 90% 20%, rgba(66,232,255,.22), transparent 55%),
-        radial-gradient(900px 600px at 40% 100%, rgba(46,229,157,.14), transparent 55%),
-        var(--bg);
+        radial-gradient(1200px 800px at 20% 0%, rgba(108,77,255,.25), transparent 60%),
+        radial-gradient(1000px 700px at 90% 20%, rgba(47,216,255,.20), transparent 55%),
+        radial-gradient(900px 600px at 40% 100%, rgba(22,163,74,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      -webkit-tap-highlight-color: transparent;
     }
 
+    /* Scroll container */
     #scrollRoot{
       height:100vh;
       overflow:auto;
-      overscroll-behavior: contain; /* ✅ stops the blue glow */
+      overscroll-behavior: none;
       -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      padding-bottom: 20px;
     }
 
     .wrap{
@@ -55,7 +83,7 @@
       padding:18px 14px 36px;
     }
 
-    /* Top bar (glass effect BACK ON) */
+    /* Top bar (sticky + shrinks on scroll) */
     .topbar{
       display:flex;
       align-items:center;
@@ -63,58 +91,75 @@
       gap:12px;
       padding:14px 16px;
       border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
       border-radius:var(--radius2);
       box-shadow:var(--shadow);
       position:sticky;
       top:10px;
-      z-index:5;
-      backdrop-filter: blur(10px);
+      z-index:10;
+      backdrop-filter: var(--glass);
+      transition: padding .18s ease, border-radius .18s ease, transform .18s ease;
     }
+
+    /* shrink state */
+    .topbar.shrink{
+      padding:8px 12px;
+      border-radius:16px;
+    }
+
     .brand{display:flex;align-items:center;gap:10px;min-width:0;}
     .logo{
       width:38px;height:38px;border-radius:12px;
       background:linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow:0 10px 24px rgba(124,92,255,.35);
+      box-shadow:0 10px 24px rgba(108,77,255,.20);
       display:grid;place-items:center;
       flex:0 0 auto;
+      transition: width .18s ease, height .18s ease, border-radius .18s ease;
     }
+    .topbar.shrink .logo{width:30px;height:30px;border-radius:10px}
+
     .brand h1{
-      font-size:16px;margin:0;letter-spacing:.3px;
+      font-size:16px;margin:0;letter-spacing:.2px;
       white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      transition: font-size .18s ease;
     }
-    .brand .sub{display:block;color:var(--muted);font-size:12px;margin-top:2px;}
+    .topbar.shrink .brand h1{font-size:14px}
+    .brand .sub{display:block;color:var(--muted);font-size:12px;margin-top:2px;transition:opacity .18s ease;}
+    .topbar.shrink .brand .sub{opacity:.85}
 
     .top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+
     .pill{
       display:flex;align-items:center;gap:8px;
       padding:8px 10px;border:1px solid var(--line);
-      border-radius:999px;background:rgba(255,255,255,.04);
+      border-radius:999px;background:rgba(255,255,255,.10);
       color:var(--muted);font-size:12px;
+      backdrop-filter: var(--glass);
     }
-    .pill strong{color:var(--text);font-weight:650}
+    .pill strong{color:var(--text);font-weight:700}
+
     .btn{
       appearance:none;border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
       color:var(--text);
       padding:9px 12px;border-radius:12px;
       cursor:pointer;
       transition:transform .08s ease, background .12s ease, border-color .12s ease;
-      font-weight:600;font-size:13px;
+      font-weight:700;font-size:13px;
+      backdrop-filter: var(--glass);
     }
-    .btn:hover{background:rgba(255,255,255,.07)}
+    .btn:hover{background:rgba(255,255,255,.16)}
     .btn:active{transform:translateY(1px)}
     .btn.primary{
-      border-color: rgba(124,92,255,.45);
-      background:linear-gradient(135deg, rgba(124,92,255,.35), rgba(66,232,255,.16));
-      box-shadow:0 10px 22px rgba(124,92,255,.18);
+      border-color: rgba(108,77,255,.35);
+      background:linear-gradient(135deg, rgba(108,77,255,.22), rgba(47,216,255,.12));
+      box-shadow:0 10px 22px rgba(108,77,255,.12);
     }
     .btn.danger{
-      border-color: rgba(255,92,122,.45);
-      background:linear-gradient(135deg, rgba(255,92,122,.22), rgba(255,255,255,.03));
+      border-color: rgba(225,29,72,.28);
+      background:linear-gradient(135deg, rgba(225,29,72,.16), rgba(255,255,255,.08));
     }
 
-    /* Layout */
     .grid{
       display:grid;
       grid-template-columns: 260px 1fr;
@@ -126,12 +171,12 @@
     .sidebar{
       border:1px solid var(--line);
       border-radius:var(--radius2);
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
       box-shadow:var(--shadow);
       padding:10px;
       position:sticky;
-      top:86px;
-      backdrop-filter: blur(10px);
+      top:84px;
+      backdrop-filter: var(--glass);
     }
     .navbtn{
       width:100%;
@@ -140,61 +185,62 @@
       background:transparent;
       color:var(--muted);
       padding:10px 12px;border-radius:14px;
-      cursor:pointer;text-align:left;font-weight:700;
-      transition:background .12s ease, color .12s ease, border-color .12s ease;
+      cursor:pointer;text-align:left;font-weight:800;
     }
     .navbtn.active{
       color:var(--text);
-      border-color: rgba(124,92,255,.30);
-      background:linear-gradient(135deg, rgba(124,92,255,.20), rgba(66,232,255,.10));
+      border-color: rgba(108,77,255,.24);
+      background:linear-gradient(135deg, rgba(108,77,255,.16), rgba(47,216,255,.10));
     }
-    .navbtn:hover{background:rgba(255,255,255,.04); color:var(--text)}
+    .navbtn:hover{background:rgba(255,255,255,.12); color:var(--text)}
     .sidehint{
       margin-top:10px;padding:10px 12px;border-radius:14px;
-      border:1px dashed rgba(255,255,255,.14);
+      border:1px dashed rgba(127,127,127,.22);
       color:var(--muted);font-size:12px;line-height:1.4;
     }
 
     .panel{
       border:1px solid var(--line);
       border-radius:var(--radius2);
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
       box-shadow:var(--shadow);
       overflow:hidden;
-      backdrop-filter: blur(10px);
+      backdrop-filter: var(--glass);
     }
     .panel-hd{
       display:flex;align-items:center;justify-content:space-between;gap:12px;
       padding:14px 16px;border-bottom:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      background:rgba(255,255,255,.08);
     }
     .panel-hd h2{margin:0;font-size:15px;letter-spacing:.2px;}
     .panel-hd .right{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
     .panel-bd{padding:14px 16px;}
 
-    /* Cards */
     .cards{
       display:grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap:10px;
     }
+    .cards.small3{grid-template-columns: repeat(3, minmax(0, 1fr));}
     .card{
       border:1px solid var(--line);
       border-radius:16px;
       padding:12px;
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      background:rgba(255,255,255,.06);
       min-height:84px;
       position:relative;
       overflow:hidden;
     }
-    .card .k{color:var(--muted); font-size:12px; font-weight:650}
-    .card .v{font-size:22px; font-weight:850; margin-top:4px}
+    .card.clickable{cursor:pointer}
+    .card.clickable:hover{background:rgba(255,255,255,.10)}
+    .card .k{color:var(--muted); font-size:12px; font-weight:900}
+    .card .v{font-size:22px; font-weight:900; margin-top:4px}
     .card .badge{
       display:inline-flex; align-items:center; gap:6px;
       padding:6px 10px;border-radius:999px;
       border:1px solid var(--line);
       font-size:12px;color:var(--muted);
-      background:rgba(255,255,255,.03);
+      background:rgba(255,255,255,.06);
       margin-top:8px;
     }
 
@@ -207,81 +253,88 @@
     .input{
       display:flex;align-items:center;gap:8px;
       border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
+      background:rgba(255,255,255,.06);
       border-radius:14px;padding:9px 10px;min-width:200px;
+      backdrop-filter: var(--glass);
     }
     .input input, .input select{
       width:100%;border:none;outline:none;
       background:transparent;color:var(--text);font-size:13px;
     }
-    .input input::placeholder{color:rgba(169,178,229,.6)}
+    .input input::placeholder{color:rgba(120,120,120,.55)}
     select option{color:#111}
 
     .table-wrap{
       border:1px solid var(--line);
       border-radius:16px;
       overflow:hidden;
-      background:rgba(10,15,28,.35);
+      background:rgba(0,0,0,.04);
     }
+    [data-theme="dark"] .table-wrap{background:rgba(0,0,0,.18)}
     table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;}
     thead th{
       text-align:left;
-      color:rgba(233,237,255,.85);
-      font-weight:800;
-      background:rgba(255,255,255,.04);
+      color:rgba(100,100,100,.95);
+      font-weight:950;
+      background:rgba(255,255,255,.10);
       border-bottom:1px solid var(--line);
       padding:11px 12px;
       position:sticky;
       top:0;
       z-index:1;
+      backdrop-filter: var(--glass);
     }
+    [data-theme="dark"] thead th{color:rgba(233,237,255,.90)}
     tbody td{
       padding:10px 12px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-      color:rgba(233,237,255,.92);
+      border-bottom:1px solid rgba(127,127,127,.12);
+      color:rgba(0,0,0,.85);
       vertical-align:top;
     }
-    tbody tr:hover td{background:rgba(255,255,255,.03)}
+    [data-theme="dark"] tbody td{color:rgba(233,237,255,.92)}
+    tbody tr:hover td{background:rgba(255,255,255,.08)}
     .mono{font-family:var(--mono); font-size:12px}
 
     .tag{
       display:inline-flex;align-items:center;gap:6px;
       padding:4px 8px;border-radius:999px;
       border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
+      background:rgba(255,255,255,.06);
       color:var(--muted);
-      font-weight:700;font-size:12px;
+      font-weight:900;font-size:12px;
       white-space:nowrap;
     }
-    .tag.good{border-color: rgba(46,229,157,.30); color: rgba(46,229,157,.95)}
-    .tag.bad{border-color: rgba(255,92,122,.35); color: rgba(255,92,122,.95)}
-    .tag.warn{border-color: rgba(255,204,102,.35); color: rgba(255,204,102,.95)}
+    .tag.good{border-color: rgba(22,163,74,.28); color: var(--good)}
+    .tag.bad{border-color: rgba(225,29,72,.28); color: var(--bad)}
+    .tag.warn{border-color: rgba(217,119,6,.28); color: var(--warn)}
 
     .rowbtn{
       padding:7px 10px;border-radius:12px;
       border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
+      background:rgba(255,255,255,.06);
       color:var(--text);
       cursor:pointer;
-      font-weight:800;
+      font-weight:950;
       font-size:12px;
       margin-right:6px;
     }
-    .rowbtn:hover{background:rgba(255,255,255,.06)}
-    .rowbtn.danger{border-color: rgba(255,92,122,.35);}
+    .rowbtn:hover{background:rgba(255,255,255,.10)}
+    .rowbtn.danger{border-color: rgba(225,29,72,.28);}
 
     .alert{
       display:none;margin:10px 0 0;
       padding:10px 12px;border-radius:14px;
       border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
+      background:rgba(255,255,255,.06);
       color:var(--muted);
       font-size:13px;line-height:1.35;
+      backdrop-filter: var(--glass);
     }
     .alert.show{display:block}
-    .alert.err{border-color: rgba(255,92,122,.35); color: rgba(255,160,175,.95); background: rgba(255,92,122,.07);}
-    .alert.ok{border-color: rgba(46,229,157,.32); color: rgba(46,229,157,.95); background: rgba(46,229,157,.07);}
-    .alert.loading{color: rgba(233,237,255,.88); font-style:italic;}
+    .alert.err{border-color: rgba(225,29,72,.28); color: var(--bad); background: rgba(225,29,72,.08);}
+    .alert.ok{border-color: rgba(22,163,74,.25); color: var(--good); background: rgba(22,163,74,.08);}
+    .alert.loading{color: rgba(60,60,60,.85); font-style:italic;}
+    [data-theme="dark"] .alert.loading{color: rgba(233,237,255,.85);}
 
     /* Modal */
     .modal{
@@ -295,58 +348,63 @@
     }
     .modal.show{display:flex}
     .modal-card{
-      width:min(720px, 100%);
+      width:min(860px, 100%);
       border-radius:22px;
       border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(15,23,51,.98), rgba(10,14,30,.98));
-      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+      background: rgba(255,255,255,.90);
+      box-shadow: 0 18px 50px rgba(0,0,0,.28);
       overflow:hidden;
-      backdrop-filter: blur(10px);
+      backdrop-filter: var(--glass);
+    }
+    [data-theme="dark"] .modal-card{
+      background: rgba(18,25,55,.95);
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
     }
     .modal-hd{
       display:flex; align-items:center; justify-content:space-between;
       padding:14px 16px;border-bottom:1px solid var(--line);
-      background:rgba(255,255,255,.03);
+      background:rgba(255,255,255,.08);
     }
     .modal-hd h3{margin:0;font-size:14px}
     .modal-bd{padding:14px 16px}
+    .modal-ft{
+      display:flex;gap:10px;justify-content:flex-end;
+      padding:12px 16px;border-top:1px solid var(--line);
+      background:rgba(255,255,255,.06);flex-wrap:wrap;
+    }
+
     .formgrid{display:grid;grid-template-columns: 1fr 1fr;gap:10px;}
     .field{
       border:1px solid var(--line);
       border-radius:14px;padding:10px 10px;
-      background:rgba(255,255,255,.03);
+      background:rgba(255,255,255,.06);
+      backdrop-filter: var(--glass);
     }
     .field label{
       display:block;font-size:12px;color:var(--muted);
-      font-weight:750;margin-bottom:6px;
+      font-weight:950;margin-bottom:6px;
     }
     .field input,.field select{width:100%;border:none;outline:none;background:transparent;color:var(--text);font-size:13px;}
-    .modal-ft{
-      display:flex;gap:10px;justify-content:flex-end;
-      padding:12px 16px;border-top:1px solid var(--line);
-      background:rgba(255,255,255,.02);flex-wrap:wrap;
-    }
 
     /* Login */
     .login{
       max-width:520px;margin:30px auto 0;
       border:1px solid var(--line);
       border-radius:22px;
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      background: linear-gradient(180deg, rgba(255,255,255,.20), rgba(255,255,255,.10));
       box-shadow:var(--shadow);
       overflow:hidden;
-      backdrop-filter: blur(10px);
+      backdrop-filter: var(--glass);
     }
     .login .hd{
       padding:18px 18px 14px;
       border-bottom:1px solid var(--line);
-      background:linear-gradient(135deg, rgba(124,92,255,.22), rgba(66,232,255,.10));
+      background:linear-gradient(135deg, rgba(108,77,255,.18), rgba(47,216,255,.10));
     }
     .login .hd h2{margin:0;font-size:16px}
-    .login .hd p{margin:6px 0 0;color:rgba(233,237,255,.8);font-size:13px}
+    .login .hd p{margin:6px 0 0;color:var(--muted);font-size:13px}
     .login .bd{padding:16px 18px 18px}
     .login .row{display:grid;grid-template-columns: 1fr 1fr;gap:10px;}
-    .login .row .field{background:rgba(0,0,0,.10)}
     .login .actions{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-top:10px;}
     .small{color:var(--muted);font-size:12px;line-height:1.35;}
 
@@ -354,6 +412,7 @@
       .grid{grid-template-columns: 1fr}
       .sidebar{position:relative; top:auto}
       .cards{grid-template-columns: repeat(2, minmax(0, 1fr));}
+      .cards.small3{grid-template-columns: 1fr;}
     }
     @media (max-width: 520px){
       .cards{grid-template-columns: 1fr;}
@@ -362,12 +421,12 @@
       .input{min-width: 100%}
       thead{display:none}
       table, tbody, tr, td{display:block; width:100%}
-      tbody td{border-bottom:1px solid rgba(255,255,255,.08);}
+      tbody td{border-bottom:1px solid rgba(127,127,127,.16);}
       tbody td::before{
         content: attr(data-label);
         display:block;
         color:var(--muted);
-        font-weight:800;
+        font-weight:950;
         margin-bottom:4px;
         font-size:12px;
       }
@@ -375,13 +434,13 @@
   </style>
 </head>
 
-<body>
+<body data-theme="light">
 <div id="scrollRoot">
   <div class="wrap">
-    <div class="topbar">
+    <div class="topbar" id="topbar">
       <div class="brand">
         <div class="logo" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <path d="M7 18c2.4 1.3 7.6 1.3 10 0" stroke="rgba(255,255,255,.95)" stroke-width="2" stroke-linecap="round"/>
             <path d="M12 3v10" stroke="rgba(255,255,255,.95)" stroke-width="2" stroke-linecap="round"/>
             <path d="M12 13c-1.8 0-3.25 1.45-3.25 3.25S10.2 19.5 12 19.5s3.25-1.45 3.25-3.25S13.8 13 12 13Z" fill="rgba(255,255,255,.95)"/>
@@ -393,6 +452,7 @@
       </div>
 
       <div class="top-actions" id="topActions" style="display:none;">
+        <button class="btn" id="themeBtn" title="Toggle theme">Theme</button>
         <div class="pill"><span>Backend</span> <strong id="backendState">OK</strong></div>
         <button class="btn" id="refreshBtn">Refresh</button>
         <button class="btn danger" id="logoutBtn">Logout</button>
@@ -402,17 +462,17 @@
     <!-- Login -->
     <div class="login" id="loginBox">
       <div class="hd">
-        <h2>Login</h2>
-        <p>Enter your admin token (Railway <code>ADMIN_TOKEN</code>) to access the panel.</p>
+        <h2>Admin Login</h2>
+        <p>Enter admin password and token to access the panel.</p>
       </div>
       <div class="bd">
         <div class="row">
           <div class="field">
-            <label>Password (local only)</label>
-            <input id="pw" type="password" placeholder="Any password (not checked by backend)" autocomplete="current-password" />
+            <label>Admin Password</label>
+            <input id="pw" type="password" placeholder="Enter admin password" autocomplete="current-password" />
           </div>
           <div class="field">
-            <label>Admin Token (required)</label>
+            <label>Admin Token</label>
             <input id="tok" type="text" placeholder="Paste your Railway ADMIN_TOKEN" autocomplete="off" />
           </div>
         </div>
@@ -420,7 +480,7 @@
         <div class="actions">
           <button class="btn primary" id="loginBtn">Login</button>
           <div class="small">
-            Tip: token is stored in <b>sessionStorage</b> (clears when you close browser).
+            Theme is saved & restored automatically.
           </div>
         </div>
         <div class="alert err" id="loginErr"></div>
@@ -437,8 +497,8 @@
         <button class="navbtn" data-view="unauth">Unauthorized</button>
 
         <div class="sidehint">
-          ✅ Blue scroll glow fixed (custom scroll container).<br/>
-          ⚡ Dashboard analytics computed on frontend from sessions + events.
+          ✅ Overscroll glow disabled (no blue pixels).<br/>
+          ✅ Theme remembered (Light default).
         </div>
       </div>
 
@@ -454,7 +514,7 @@
           <div class="alert loading show" id="dashLoading">Loading dashboard…</div>
           <div class="alert err" id="dashErr"></div>
 
-          <!-- Main stats from backend /admin/stats -->
+          <!-- Backend stats -->
           <div class="cards" id="statCards" style="display:none;">
             <div class="card"><div class="k">Total licenses</div><div class="v" id="cTotal">0</div><div class="badge">All</div></div>
             <div class="card"><div class="k">Active</div><div class="v" id="cActive">0</div><div class="badge"><span style="width:8px;height:8px;border-radius:99px;background:var(--good);display:inline-block"></span> Active</div></div>
@@ -463,23 +523,23 @@
             <div class="card"><div class="k">Premium</div><div class="v" id="cPremium">0</div><div class="badge">Premium</div></div>
           </div>
 
-          <!-- NEW: frontend calculated analytics -->
+          <!-- Frontend analytics (clickable) -->
           <div style="margin-top:12px;">
-            <div class="cards" id="calcCards" style="display:none; grid-template-columns: repeat(3, minmax(0, 1fr));">
-              <div class="card">
-                <div class="k">Today licensed usage</div>
+            <div class="cards small3" id="calcCards" style="display:none;">
+              <div class="card clickable" id="cardTodayUsage">
+                <div class="k">Today usage (by user)</div>
                 <div class="v" id="cTodayUsage">0m</div>
-                <div class="badge">Sum duration (ended sessions)</div>
+                <div class="badge">Click to view users</div>
               </div>
               <div class="card">
-                <div class="k">Last 7 days licensed usage</div>
+                <div class="k">Last 7 days usage (licensed)</div>
                 <div class="v" id="cWeekUsage">0h</div>
                 <div class="badge">Rolling 7 days</div>
               </div>
-              <div class="card">
+              <div class="card clickable" id="cardTodayBad">
                 <div class="k">Today unauthorised + expired</div>
                 <div class="v" id="cTodayBad">0</div>
-                <div class="badge">Events result = unauthorised/expired/inactive</div>
+                <div class="badge">Click to view list</div>
               </div>
             </div>
           </div>
@@ -488,13 +548,13 @@
             <div class="left">
               <div class="input" style="min-width:320px;">
                 <span style="opacity:.8">🔎</span>
-                <input id="quickDevice" placeholder="Quick lookup: enter device_id (license + recent logs)" />
+                <input id="quickDevice" placeholder="Quick lookup: device_id" />
               </div>
               <button class="btn primary" id="quickLookupBtn">Lookup</button>
             </div>
             <div class="right">
-              <span class="pill">Cache: <strong>30s</strong></span>
-              <span class="pill">Fetch limit: <strong>1000</strong> (analytics)</span>
+              <span class="pill">Cache <strong>30s</strong></span>
+              <span class="pill">Analytics fetch <strong>1000</strong></span>
             </div>
           </div>
 
@@ -508,7 +568,7 @@
             <div class="panel-bd">
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                 <div>
-                  <div style="font-weight:850; color:rgba(233,237,255,.92); margin-bottom:8px;">Unauthorized / Expired checks (latest)</div>
+                  <div style="font-weight:950; margin-bottom:8px;">Unauthorized / Expired (latest)</div>
                   <div class="table-wrap">
                     <table id="dashUnauthTable">
                       <thead><tr><th>device_id</th><th>result</th><th>time</th></tr></thead>
@@ -517,7 +577,7 @@
                   </div>
                 </div>
                 <div>
-                  <div style="font-weight:850; color:rgba(233,237,255,.92); margin-bottom:8px;">Recent sessions (latest)</div>
+                  <div style="font-weight:950; margin-bottom:8px;">Recent sessions (latest)</div>
                   <div class="table-wrap">
                     <table id="dashSessionsTable">
                       <thead><tr><th>device_id</th><th>status</th><th>duration</th><th>start</th></tr></thead>
@@ -528,7 +588,7 @@
               </div>
 
               <div style="margin-top:12px;">
-                <div style="font-weight:850; color:rgba(233,237,255,.92); margin-bottom:8px;">Recent events (latest)</div>
+                <div style="font-weight:950; margin-bottom:8px;">Recent events (latest)</div>
                 <div class="table-wrap">
                   <table id="dashEventsTable">
                     <thead><tr><th>device_id</th><th>event</th><th>result</th><th>time</th></tr></thead>
@@ -539,27 +599,6 @@
 
               <div class="alert ok" id="quickOk"></div>
               <div class="alert err" id="quickErr"></div>
-            </div>
-          </div>
-
-          <!-- NEW: Top devices today -->
-          <div class="panel" style="margin-top:12px;">
-            <div class="panel-hd">
-              <h2>Top licensed devices today (by duration)</h2>
-              <div class="right">
-                <span class="pill">Computed frontend</span>
-              </div>
-            </div>
-            <div class="panel-bd">
-              <div class="table-wrap">
-                <table id="topTodayTable">
-                  <thead><tr><th>device_id</th><th>minutes</th><th>sessions</th></tr></thead>
-                  <tbody></tbody>
-                </table>
-              </div>
-              <div class="small" style="margin-top:8px;">
-                Note: This uses fetched sessions (limit 1000). If you have more than 1000 sessions/day, backend needs a date-filter endpoint for perfect accuracy.
-              </div>
             </div>
           </div>
 
@@ -595,9 +634,6 @@
               </div>
               <button class="btn" id="licLoadBtn">Load</button>
               <button class="btn" id="licClearBtn">Clear</button>
-            </div>
-            <div class="right">
-              <span class="pill">Status always <strong>active</strong> until expiry</span>
             </div>
           </div>
 
@@ -754,7 +790,7 @@
     </div>
   </div>
 
-  <!-- License Modal (status removed; expiry not past) -->
+  <!-- License Modal -->
   <div class="modal" id="licModal">
     <div class="modal-card">
       <div class="modal-hd">
@@ -778,7 +814,6 @@
           Status is always <b>active</b> until expiry.
         </div>
         <div class="alert err" id="modalErr"></div>
-        <div class="alert ok" id="modalOk"></div>
       </div>
       <div class="modal-ft">
         <button class="btn primary" id="modalSave">Save</button>
@@ -787,15 +822,45 @@
     </div>
   </div>
 
+  <!-- List Modal (for clickable cards) -->
+  <div class="modal" id="listModal">
+    <div class="modal-card">
+      <div class="modal-hd">
+        <h3 id="listTitle">Details</h3>
+        <button class="btn" id="listClose">Close</button>
+      </div>
+      <div class="modal-bd">
+        <div class="table-wrap">
+          <table id="listTable">
+            <thead id="listHead"></thead>
+            <tbody id="listBody"></tbody>
+          </table>
+        </div>
+        <div class="small" id="listHint" style="margin-top:10px;"></div>
+      </div>
+      <div class="modal-ft">
+        <button class="btn" id="listExportCsv">Export CSV</button>
+        <button class="btn" id="listExportJson">Export JSON</button>
+      </div>
+    </div>
+  </div>
+
 <script>
 (() => {
-  // ✅ Your Railway backend
+  // ✅ Your backend
   const API_BASE = "https://golf-licenses-production.up.railway.app";
+
+  // ✅ Local password lock (still not “real security” because repo is public)
+  // Default password = admin123 (hash = sha256("admin123"))
+  // Change this hash if you want a different password.
+  const ADMIN_PASSWORD_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
 
   const CACHE_MS = 30000;
   const DEFAULT_TIMEOUT = 15000;
+  const ANALYTICS_LIMIT = 1000;
 
   const $ = (id) => document.getElementById(id);
+  const root = document.documentElement;
 
   const state = {
     token: null,
@@ -810,9 +875,56 @@
       analytics: null
     },
     modalMode: "create",
-    modalDevice: null
+    modalDevice: null,
+    listData: [],
+    listMeta: {title:"", type:""}
   };
 
+  // ---------- THEME ----------
+  function setTheme(theme){
+    document.body.setAttribute("data-theme", theme);
+    localStorage.setItem("adminTheme", theme);
+  }
+  function toggleTheme(){
+    const cur = document.body.getAttribute("data-theme") || "light";
+    setTheme(cur === "light" ? "dark" : "light");
+  }
+
+  // Default light, then restore last
+  const savedTheme = localStorage.getItem("adminTheme") || "light";
+  setTheme(savedTheme);
+
+  $("themeBtn").addEventListener("click", toggleTheme);
+
+  // ---------- OVERSCROLL HARD STOP (kills last blue pixels on some Android browsers) ----------
+  const scrollEl = $("scrollRoot");
+  let lastTouchY = 0;
+  scrollEl.addEventListener("touchstart", (e) => {
+    if(e.touches && e.touches.length) lastTouchY = e.touches[0].clientY;
+  }, {passive:true});
+
+  scrollEl.addEventListener("touchmove", (e) => {
+    if(!e.touches || !e.touches.length) return;
+    const y = e.touches[0].clientY;
+    const dy = y - lastTouchY;
+    lastTouchY = y;
+
+    const atTop = scrollEl.scrollTop <= 0;
+    const atBottom = scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 1;
+
+    // If pulling down at top OR pulling up at bottom => prevent overscroll glow
+    if((atTop && dy > 0) || (atBottom && dy < 0)){
+      e.preventDefault();
+    }
+  }, {passive:false});
+
+  // ---------- TOPBAR SHRINK ----------
+  const topbar = $("topbar");
+  scrollEl.addEventListener("scroll", () => {
+    topbar.classList.toggle("shrink", scrollEl.scrollTop > 20);
+  });
+
+  // ---------- UTILS ----------
   function todayISO(){
     const d = new Date();
     const yyyy = d.getFullYear();
@@ -828,22 +940,20 @@
     const dd = String(d.getDate()).padStart(2,'0');
     return `${yyyy}-${mm}-${dd}`;
   }
-
-  function setBackendLine(text){ $("svcLine").textContent = text; }
-
-  function showAlert(el, msg, kind="err"){
-    el.textContent = msg || "";
-    el.classList.remove("show","err","ok","loading");
-    if(!msg) return;
-    el.classList.add("show");
-    el.classList.add(kind);
+  function dateOnlyISO(dateStr){
+    if(!dateStr) return "";
+    try{
+      const d = new Date(dateStr);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const dd = String(d.getDate()).padStart(2,'0');
+      return `${yyyy}-${mm}-${dd}`;
+    }catch{return ""}
   }
-
   function fmtDateTime(s){
     if(!s) return "";
     try { return new Date(s).toLocaleString(); } catch { return String(s); }
   }
-
   function fmtDuration(sec){
     const n = Number(sec || 0);
     if(n < 60) return `${Math.round(n)}s`;
@@ -852,6 +962,13 @@
     const h = Math.floor(m/60);
     const mm = m % 60;
     return `${h}h ${mm}m`;
+  }
+
+  function showAlert(el, msg, kind="err"){
+    el.textContent = msg || "";
+    el.classList.remove("show","err","ok","loading");
+    if(!msg) return;
+    el.classList.add("show", kind);
   }
 
   function download(data, filename, mime){
@@ -884,8 +1001,8 @@
     try{
       const res = await fetch(url, { ...opts, signal: controller.signal });
       if(!res.ok){
-        let j = null;
-        try{ j = await res.json(); }catch{}
+        let j=null;
+        try{ j=await res.json(); }catch{}
         const msg = (j && j.error) ? j.error : `HTTP ${res.status}`;
         const e = new Error(msg);
         e.status = res.status;
@@ -898,7 +1015,6 @@
   }
 
   function cacheKey(name, params){ return name + "::" + JSON.stringify(params||{}); }
-
   async function cached(name, params, getter){
     const key = cacheKey(name, params);
     const now = Date.now();
@@ -918,7 +1034,54 @@
     return u.toString();
   }
 
-  // Views
+  function escapeHtml(s){
+    return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  }
+  function escapeAttr(s){ return String(s ?? "").replace(/"/g, "&quot;"); }
+
+  // ---------- PASSWORD HASH CHECK ----------
+  async function sha256Hex(text){
+    const enc = new TextEncoder().encode(text);
+    const buf = await crypto.subtle.digest("SHA-256", enc);
+    const arr = Array.from(new Uint8Array(buf));
+    return arr.map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  // ---------- TAGS ----------
+  function isExpiredDate(expiry){
+    if(!expiry) return true;
+    const end = new Date(String(expiry) + "T23:59:59.999Z");
+    return end.getTime() < Date.now();
+  }
+  function tagLevel(level){
+    const v = (level || "").toLowerCase();
+    if(v === "premium") return `<span class="tag good">premium</span>`;
+    if(v === "lite") return `<span class="tag">lite</span>`;
+    return `<span class="tag warn">${escapeHtml(level||"unknown")}</span>`;
+  }
+  function tagSessionStatus(st){
+    const v = (st || "").toLowerCase();
+    if(v === "ended") return `<span class="tag good">ended</span>`;
+    if(v === "running") return `<span class="tag warn">running</span>`;
+    if(v === "aborted") return `<span class="tag bad">aborted</span>`;
+    return `<span class="tag">${escapeHtml(st||"")}</span>`;
+  }
+  function tagResult(res){
+    const v = (res || "").toLowerCase();
+    if(v === "valid" || v === "ok") return `<span class="tag good">${escapeHtml(res)}</span>`;
+    if(v === "expired") return `<span class="tag warn">${escapeHtml(res)}</span>`;
+    if(v === "unauthorised" || v === "unauthorized" || v === "inactive") return `<span class="tag bad">${escapeHtml(res)}</span>`;
+    return `<span class="tag">${escapeHtml(res || "")}</span>`;
+  }
+  function tagStatus(status, expiry){
+    const st = (status || "").toLowerCase();
+    const expired = isExpiredDate(expiry);
+    if(st !== "active") return `<span class="tag bad">${escapeHtml(status||"inactive")}</span>`;
+    if(expired) return `<span class="tag warn">active • expired</span>`;
+    return `<span class="tag good">active</span>`;
+  }
+
+  // ---------- VIEWS ----------
   const views = ["dash","licenses","sessions","events","unauth"];
   function showView(v){
     for(const name of views){
@@ -930,6 +1093,8 @@
       b.classList.toggle("active", b.dataset.view === v);
     });
   }
+
+  function setBackendLine(text){ $("svcLine").textContent = text; }
 
   async function pingBackend(){
     try{
@@ -966,24 +1131,34 @@
 
   $("logoutBtn").addEventListener("click", logout);
 
+  // Theme default should be light when login, but restore last used always
+  // (Already handled by localStorage setTheme)
+
   $("loginBtn").addEventListener("click", async () => {
     showAlert($("loginErr"), "");
-    const pw = $("pw").value.trim();
+    const pw = $("pw").value;
     const tok = $("tok").value.trim();
-    if(!pw){ showAlert($("loginErr"), "Password is required (local only)."); return; }
-    if(!tok){ showAlert($("loginErr"), "Admin Token is required."); return; }
+    if(!pw){ showAlert($("loginErr"), "Password required.", "err"); return; }
+    if(!tok){ showAlert($("loginErr"), "Admin token required.", "err"); return; }
 
     try{
-      $("loginBtn").textContent = "Logging in…";
+      $("loginBtn").textContent = "Checking…";
+      const pwHash = await sha256Hex(pw);
+      if(pwHash !== ADMIN_PASSWORD_HASH){
+        showAlert($("loginErr"), "Invalid password.", "err");
+        return;
+      }
+
       await pingBackend();
       await validateToken(tok);
+
       state.token = tok;
       sessionStorage.setItem("adminToken", tok);
       setLoggedIn(true);
       showView("dash");
       await loadDashboard(true);
     }catch(e){
-      showAlert($("loginErr"), e.status === 401 ? "Invalid token (401)." : ("Login failed: " + (e.message || "unknown")));
+      showAlert($("loginErr"), e.status === 401 ? "Invalid token (401)." : ("Login failed: " + (e.message || "unknown")), "err");
     }finally{
       $("loginBtn").textContent = "Login";
     }
@@ -1006,101 +1181,107 @@
     });
   });
 
-  // ---------- FRONTEND ANALYTICS (today/weekly usage + today unauth+expired) ----------
-  function dateOnlyISO(dateStr){
-    if(!dateStr) return "";
-    try{
-      const d = new Date(dateStr);
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth()+1).padStart(2,'0');
-      const dd = String(d.getDate()).padStart(2,'0');
-      return `${yyyy}-${mm}-${dd}`;
-    }catch{return ""}
-  }
-
+  // ---------- ANALYTICS ----------
   function computeAnalytics(licenses, sessions, events){
     const today = todayISO();
-    const weekStart = daysAgoISO(6); // last 7 days inclusive (today + 6 previous)
+    const weekStart = daysAgoISO(6);
 
-    // licensed device set (active licenses only ideally)
-    const licensed = new Set((licenses||[]).map(l => l.device_id).filter(Boolean));
+    // device_id -> username mapping (licenses)
+    const deviceToUser = new Map();
+    for(const l of (licenses||[])){
+      if(l && l.device_id) deviceToUser.set(l.device_id, l.username || "");
+    }
+    const licensedDevices = new Set(deviceToUser.keys());
 
-    let todaySec = 0;
+    // Today usage by USER (username) + device
+    const byUserToday = new Map(); // key username|device -> {username, device_id, sec, sessions}
+    let totalTodaySec = 0;
     let weekSec = 0;
 
-    const perDeviceToday = new Map(); // device_id -> {sec, sessions}
     for(const s of (sessions||[])){
       const device = s.device_id;
-      if(!device || !licensed.has(device)) continue;
+      if(!device || !licensedDevices.has(device)) continue;
+
       const st = (s.status || "").toLowerCase();
-      if(st !== "ended") continue; // usage duration is reliable when ended
-      const startISO = dateOnlyISO(s.start_time);
+      if(st !== "ended") continue;
+
       const dur = Number(s.duration_sec || 0);
       if(!Number.isFinite(dur) || dur <= 0) continue;
 
-      if(startISO === today){
-        todaySec += dur;
-        const obj = perDeviceToday.get(device) || {sec:0, sessions:0};
-        obj.sec += dur; obj.sessions += 1;
-        perDeviceToday.set(device, obj);
-      }
+      const startISO = dateOnlyISO(s.start_time);
+
+      // weekly total for licensed devices
       if(startISO >= weekStart && startISO <= today){
         weekSec += dur;
       }
+
+      // today by user
+      if(startISO === today){
+        totalTodaySec += dur;
+        const username = deviceToUser.get(device) || "(no username)";
+        const key = username + "|" + device;
+        const obj = byUserToday.get(key) || {username, device_id: device, sec:0, sessions:0};
+        obj.sec += dur;
+        obj.sessions += 1;
+        byUserToday.set(key, obj);
+      }
     }
 
-    // Today unauthorized + expired count from events results
-    let todayBad = 0;
+    // Today unauthorised + expired list + count
+    const todayBadRows = [];
     for(const e of (events||[])){
       const iso = dateOnlyISO(e.created_at);
       if(iso !== today) continue;
       const r = (e.result || "").toLowerCase();
       if(r === "unauthorised" || r === "unauthorized" || r === "expired" || r === "inactive"){
-        todayBad += 1;
+        const device = e.device_id || "";
+        todayBadRows.push({
+          device_id: device,
+          username: deviceToUser.get(device) || "",
+          result: e.result || "",
+          time: e.created_at || ""
+        });
       }
     }
 
-    // Top devices today by minutes
-    const top = [...perDeviceToday.entries()]
-      .map(([device, obj]) => ({device_id: device, minutes: Math.round(obj.sec/60), sessions: obj.sessions, sec: obj.sec}))
+    // Sort lists
+    const todayUsageRows = [...byUserToday.values()]
       .sort((a,b) => b.sec - a.sec)
-      .slice(0, 15);
+      .map(x => ({
+        username: x.username,
+        device_id: x.device_id,
+        minutes: Math.round(x.sec/60),
+        sessions: x.sessions,
+        sec: x.sec
+      }));
 
-    return { todaySec, weekSec, todayBad, top };
+    todayBadRows.sort((a,b) => String(b.time).localeCompare(String(a.time)));
+
+    return {
+      totalTodaySec,
+      weekSec,
+      todayUsageRows,
+      todayBadRows
+    };
   }
 
-  function renderTopToday(top){
-    const tb = $("topTodayTable").querySelector("tbody");
-    tb.innerHTML = "";
-    for(const r of (top||[])){
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id)}</td>
-        <td data-label="minutes">${escapeHtml(String(r.minutes))}</td>
-        <td data-label="sessions">${escapeHtml(String(r.sessions))}</td>
-      `;
-      tb.appendChild(tr);
-    }
-  }
-
-  // Dashboard loads: stats + mini lists + analytics (licenses+sessions+events)
-  async function loadDashboard(force){
+  // ---------- DASHBOARD ----------
+  async function loadDashboard(){
     showAlert($("dashErr"), "");
     $("dashLoading").classList.add("show");
     $("statCards").style.display = "none";
     $("calcCards").style.display = "none";
 
     try{
-      // base dashboard (fast)
       const statsP = cached("stats", {}, () => fetchJSON(authedUrl("/admin/stats")));
       const unauthP = cached("unauth-mini", {limit: 10}, () => fetchJSON(authedUrl("/admin/unauthorised", {limit: 10})));
       const sesMiniP = cached("ses-mini", {limit: 10}, () => fetchJSON(authedUrl("/admin/sessions", {limit: 10})));
       const evtMiniP = cached("evt-mini", {limit: 10}, () => fetchJSON(authedUrl("/admin/events", {limit: 10})));
 
-      // analytics (needs more rows)
-      const licAllP = cached("lic-all", {limit: 1000}, () => fetchJSON(authedUrl("/admin/licenses", {limit: 1000})));
-      const sesAllP = cached("ses-all", {limit: 1000}, () => fetchJSON(authedUrl("/admin/sessions", {limit: 1000})));
-      const evtAllP = cached("evt-all", {limit: 1000}, () => fetchJSON(authedUrl("/admin/events", {limit: 1000})));
+      // analytics pulls (larger)
+      const licAllP = cached("lic-all", {limit: ANALYTICS_LIMIT}, () => fetchJSON(authedUrl("/admin/licenses", {limit: ANALYTICS_LIMIT})));
+      const sesAllP = cached("ses-all", {limit: ANALYTICS_LIMIT}, () => fetchJSON(authedUrl("/admin/sessions", {limit: ANALYTICS_LIMIT})));
+      const evtAllP = cached("evt-all", {limit: ANALYTICS_LIMIT}, () => fetchJSON(authedUrl("/admin/events", {limit: ANALYTICS_LIMIT})));
 
       const [stats, unauth, sessionsMini, eventsMini, licensesAll, sessionsAll, eventsAll] =
         await Promise.all([statsP, unauthP, sesMiniP, evtMiniP, licAllP, sesAllP, evtAllP]);
@@ -1111,39 +1292,30 @@
       state.last.sessions = sessionsAll || [];
       state.last.events = eventsAll || [];
 
-      // stats cards
       $("cTotal").textContent = stats.total ?? 0;
       $("cActive").textContent = stats.active ?? 0;
       $("cExpired").textContent = stats.expired ?? 0;
       $("cLite").textContent = stats.lite ?? 0;
       $("cPremium").textContent = stats.premium ?? 0;
 
-      // lists
       fillDashUnauth(unauth);
       fillDashSessions(sessionsMini);
       fillDashEvents(eventsMini);
 
-      // analytics
       const analytics = computeAnalytics(licensesAll, sessionsAll, eventsAll);
       state.last.analytics = analytics;
 
-      $("cTodayUsage").textContent = fmtDuration(analytics.todaySec);
+      $("cTodayUsage").textContent = fmtDuration(analytics.totalTodaySec);
       $("cWeekUsage").textContent = fmtDuration(analytics.weekSec);
-      $("cTodayBad").textContent = String(analytics.todayBad);
-
-      renderTopToday(analytics.top);
+      $("cTodayBad").textContent = String(analytics.todayBadRows.length);
 
       $("statCards").style.display = "grid";
       $("calcCards").style.display = "grid";
       $("dashLoading").classList.remove("show");
     }catch(e){
       $("dashLoading").classList.remove("show");
-      if(e.status === 401){
-        showAlert($("dashErr"), "Unauthorized (token invalid). Logging out…", "err");
-        setTimeout(logout, 800);
-        return;
-      }
-      showAlert($("dashErr"), "Failed to load dashboard: " + (e.message || "unknown error"), "err");
+      if(e.status === 401){ showAlert($("dashErr"), "Unauthorized. Logging out…", "err"); setTimeout(logout, 800); return; }
+      showAlert($("dashErr"), "Failed to load dashboard: " + (e.message || "unknown"), "err");
     }
   }
 
@@ -1153,21 +1325,20 @@
     for(const r of rows || []){
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
         <td data-label="result">${tagResult(r.result)}</td>
         <td data-label="time">${escapeHtml(fmtDateTime(r.created_at))}</td>
       `;
       tb.appendChild(tr);
     }
   }
-
   function fillDashSessions(rows){
     const tb = $("dashSessionsTable").querySelector("tbody");
     tb.innerHTML = "";
     for(const r of rows || []){
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
         <td data-label="status">${tagSessionStatus(r.status)}</td>
         <td data-label="duration">${escapeHtml(fmtDuration(r.duration_sec))}</td>
         <td data-label="start">${escapeHtml(fmtDateTime(r.start_time))}</td>
@@ -1175,15 +1346,14 @@
       tb.appendChild(tr);
     }
   }
-
   function fillDashEvents(rows){
     const tb = $("dashEventsTable").querySelector("tbody");
     tb.innerHTML = "";
     for(const r of rows || []){
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
-        <td data-label="event">${escapeHtml(r.event || "")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
+        <td data-label="event">${escapeHtml(r.event||"")}</td>
         <td data-label="result">${tagResult(r.result)}</td>
         <td data-label="time">${escapeHtml(fmtDateTime(r.created_at))}</td>
       `;
@@ -1197,13 +1367,87 @@
   });
 
   $("dashExportJson").addEventListener("click", () => {
-    const payload = {
-      dashboard: state.last.dashboard || {},
-      analytics: state.last.analytics || {}
-    };
+    const payload = { dashboard: state.last.dashboard || {}, analytics: state.last.analytics || {} };
     download(JSON.stringify(payload, null, 2), "dashboard.json", "application/json");
   });
 
+  // ---------- CLICKABLE CARDS -> MODAL LIST ----------
+  function openListModal(title, columns, rows, hint, type){
+    state.listMeta = {title, type};
+    state.listData = rows || [];
+    $("listTitle").textContent = title;
+    $("listHint").textContent = hint || "";
+
+    // head
+    const thead = $("listHead");
+    thead.innerHTML = "<tr>" + columns.map(c => `<th>${escapeHtml(c)}</th>`).join("") + "</tr>";
+
+    // body
+    const tbody = $("listBody");
+    tbody.innerHTML = "";
+    for(const r of rows || []){
+      const tr = document.createElement("tr");
+      tr.innerHTML = columns.map(c => {
+        const v = r[c];
+        const label = c;
+        return `<td data-label="${escapeAttr(label)}">${escapeHtml(v ?? "")}</td>`;
+      }).join("");
+      tbody.appendChild(tr);
+    }
+
+    $("listModal").classList.add("show");
+  }
+
+  $("listClose").addEventListener("click", () => $("listModal").classList.remove("show"));
+  $("listModal").addEventListener("click", (e) => { if(e.target.id === "listModal") $("listModal").classList.remove("show"); });
+
+  $("listExportJson").addEventListener("click", () => {
+    download(JSON.stringify(state.listData || [], null, 2), (state.listMeta.type||"list") + ".json", "application/json");
+  });
+
+  $("listExportCsv").addEventListener("click", () => {
+    // create temp table csv
+    const tbl = $("listTable");
+    download(tableToCSV(tbl), (state.listMeta.type||"list") + ".csv", "text/csv");
+  });
+
+  $("cardTodayUsage").addEventListener("click", () => {
+    const a = state.last.analytics;
+    if(!a) return;
+    const rows = (a.todayUsageRows || []).map(x => ({
+      username: x.username,
+      device_id: x.device_id,
+      minutes: x.minutes,
+      sessions: x.sessions
+    }));
+    openListModal(
+      "Today usage (by user/device)",
+      ["username","device_id","minutes","sessions"],
+      rows,
+      "Computed from ended sessions today (licensed devices).",
+      "today_usage"
+    );
+  });
+
+  $("cardTodayBad").addEventListener("click", () => {
+    const a = state.last.analytics;
+    if(!a) return;
+    const rows = (a.todayBadRows || []).map(x => ({
+      device_id: x.device_id,
+      username: x.username || "",
+      result: x.result,
+      time: fmtDateTime(x.time)
+    }));
+    openListModal(
+      "Today unauthorised + expired attempts",
+      ["device_id","username","result","time"],
+      rows,
+      "From events today where result is unauthorised/expired/inactive.",
+      "today_unauth_expired"
+    );
+  });
+
+  // Quick lookup
   $("quickLookupBtn").addEventListener("click", async () => {
     showAlert($("quickErr"), "");
     showAlert($("quickOk"), "");
@@ -1218,19 +1462,117 @@
 
       const licRow = (lic && lic[0]) ? lic[0] : null;
       const msg = licRow
-        ? `Found license: ${licRow.username} • ${licRow.level} • expiry ${licRow.expiry} • ${licRow.status}`
+        ? `Found: ${licRow.username} • ${licRow.level} • expiry ${licRow.expiry} • ${licRow.status}`
         : `No license found for ${device}`;
 
       showAlert($("quickOk"), msg, "ok");
       fillDashEvents(evts);
       fillDashSessions(sess);
-
     }catch(e){
-      showAlert($("quickErr"), "Lookup failed: " + (e.message || "unknown error"), "err");
+      showAlert($("quickErr"), "Lookup failed: " + (e.message || "unknown"), "err");
     }
   });
 
-  // Licenses tab
+  // ---------- LICENSE CRUD ----------
+  function applyExpiryMin(){ $("mExpiry").min = todayISO(); }
+
+  function openCreate(){
+    applyExpiryMin();
+    state.modalMode = "create";
+    state.modalDevice = null;
+    $("modalTitle").textContent = "Add License";
+    $("mDevice").disabled = false;
+    $("mDevice").value = "";
+    $("mUser").value = "";
+    $("mLevel").value = "";
+    $("mExpiry").value = "";
+    showAlert($("modalErr"), "");
+    $("licModal").classList.add("show");
+  }
+
+  async function openEdit(device){
+    applyExpiryMin();
+    state.modalMode = "edit";
+    state.modalDevice = device;
+    $("modalTitle").textContent = "Edit License";
+    showAlert($("modalErr"), "");
+    $("licModal").classList.add("show");
+    try{
+      const data = await fetchJSON(authedUrl("/admin/licenses", {device_id: device, limit: 1}));
+      const lic = data && data[0];
+      if(!lic) throw new Error("License not found");
+      $("mDevice").value = lic.device_id || "";
+      $("mUser").value = lic.username || "";
+      $("mLevel").value = (lic.level || "").toLowerCase();
+      $("mExpiry").value = lic.expiry || "";
+      $("mDevice").disabled = true;
+    }catch(e){
+      showAlert($("modalErr"), "Could not load license: " + (e.message || "unknown"), "err");
+    }
+  }
+
+  async function doDelete(device){
+    if(!confirm("Delete license for device_id: " + device + " ?")) return;
+    try{
+      await fetchJSON(authedUrl("/admin/licenses", {device_id: device}), { method:"DELETE" });
+      state.cache.clear();
+      await loadDashboard(true);
+      await loadLicenses();
+    }catch(e){
+      alert("Delete failed: " + (e.message || "unknown"));
+    }
+  }
+
+  $("openCreate").addEventListener("click", openCreate);
+  $("modalClose").addEventListener("click", () => $("licModal").classList.remove("show"));
+  $("modalCancel").addEventListener("click", () => $("licModal").classList.remove("show"));
+  $("licModal").addEventListener("click", (e) => { if(e.target.id === "licModal") $("licModal").classList.remove("show"); });
+
+  $("modalSave").addEventListener("click", async () => {
+    showAlert($("modalErr"), "");
+    const device = $("mDevice").value.trim();
+    const username = $("mUser").value.trim();
+    const level = $("mLevel").value;
+    const expiry = $("mExpiry").value;
+
+    if(!device || !username || !level || !expiry){
+      showAlert($("modalErr"), "All fields are required.", "err");
+      return;
+    }
+    if(expiry < todayISO()){
+      showAlert($("modalErr"), "Expiry date cannot be in the past.", "err");
+      return;
+    }
+
+    const payload = { device_id: device, username, level, expiry, status: "active" };
+
+    try{
+      $("modalSave").textContent = "Saving…";
+      if(state.modalMode === "create"){
+        await fetchJSON(authedUrl("/admin/licenses"), {
+          method:"POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify(payload)
+        });
+      }else{
+        await fetchJSON(authedUrl("/admin/licenses", {device_id: state.modalDevice || device}), {
+          method:"PUT",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify(payload)
+        });
+      }
+      $("licModal").classList.remove("show");
+      state.cache.clear();
+      await loadDashboard(true);
+      await loadLicenses();
+    }catch(e){
+      showAlert($("modalErr"), "Save failed: " + (e.message || "unknown"), "err");
+    }finally{
+      $("modalSave").textContent = "Save";
+    }
+  });
+
+  // ---------- LICENSES TAB ----------
   async function loadLicenses(){
     showAlert($("licErr"), "");
     $("licLoading").classList.add("show");
@@ -1279,7 +1621,7 @@
   $("licExportCsv").addEventListener("click", () => download(tableToCSV($("licTable")), "licenses.csv", "text/csv"));
   $("licExportJson").addEventListener("click", () => download(JSON.stringify(state.last.licenses || [], null, 2), "licenses.json", "application/json"));
 
-  // Sessions tab
+  // ---------- SESSIONS TAB ----------
   async function loadSessions(){
     showAlert($("sesErr"), "");
     $("sesLoading").classList.add("show");
@@ -1324,7 +1666,7 @@
   $("sesExportCsv").addEventListener("click", () => download(tableToCSV($("sesTable")), "sessions.csv", "text/csv"));
   $("sesExportJson").addEventListener("click", () => download(JSON.stringify(state.last.sessions || [], null, 2), "sessions.json", "application/json"));
 
-  // Events tab
+  // ---------- EVENTS TAB ----------
   async function loadEvents(){
     showAlert($("evtErr"), "");
     $("evtLoading").classList.add("show");
@@ -1368,7 +1710,7 @@
   $("evtExportCsv").addEventListener("click", () => download(tableToCSV($("evtTable")), "events.csv", "text/csv"));
   $("evtExportJson").addEventListener("click", () => download(JSON.stringify(state.last.events || [], null, 2), "events.json", "application/json"));
 
-  // Unauthorized tab
+  // ---------- UNAUTH TAB ----------
   async function loadUnauth(){
     showAlert($("unErr"), "");
     $("unLoading").classList.add("show");
@@ -1408,168 +1750,20 @@
   $("unExportCsv").addEventListener("click", () => download(tableToCSV($("unTable")), "unauthorised.csv", "text/csv"));
   $("unExportJson").addEventListener("click", () => download(JSON.stringify(state.last.unauth || [], null, 2), "unauthorised.json", "application/json"));
 
-  // Modal create/edit: status removed; expiry can't be past; always active
-  function applyExpiryMin(){
-    $("mExpiry").min = todayISO();
-  }
-
-  function openCreate(){
-    applyExpiryMin();
-    state.modalMode = "create";
-    state.modalDevice = null;
-    $("modalTitle").textContent = "Add License";
-    $("mDevice").disabled = false;
-    $("mDevice").value = "";
-    $("mUser").value = "";
-    $("mLevel").value = "";
-    $("mExpiry").value = "";
-    showAlert($("modalErr"), "");
-    showAlert($("modalOk"), "");
-    $("licModal").classList.add("show");
-  }
-
-  async function openEdit(device){
-    applyExpiryMin();
-    state.modalMode = "edit";
-    state.modalDevice = device;
-    $("modalTitle").textContent = "Edit License";
-    showAlert($("modalErr"), "");
-    showAlert($("modalOk"), "");
-    $("licModal").classList.add("show");
-    try{
-      const data = await fetchJSON(authedUrl("/admin/licenses", {device_id: device, limit: 1}));
-      const lic = data && data[0];
-      if(!lic) throw new Error("License not found");
-      $("mDevice").value = lic.device_id || "";
-      $("mUser").value = lic.username || "";
-      $("mLevel").value = (lic.level || "").toLowerCase();
-      $("mExpiry").value = lic.expiry || "";
-      $("mDevice").disabled = true;
-    }catch(e){
-      showAlert($("modalErr"), "Could not load license: " + (e.message || "unknown"), "err");
-    }
-  }
-
-  async function doDelete(device){
-    if(!confirm("Delete license for device_id: " + device + " ?")) return;
-    try{
-      await fetchJSON(authedUrl("/admin/licenses", {device_id: device}), { method:"DELETE" });
-      state.cache.clear();
-      await loadDashboard(true);
-      await loadLicenses();
-    }catch(e){
-      alert("Delete failed: " + (e.message || "unknown"));
-    }
-  }
-
-  $("openCreate").addEventListener("click", openCreate);
-  $("modalClose").addEventListener("click", () => $("licModal").classList.remove("show"));
-  $("modalCancel").addEventListener("click", () => $("licModal").classList.remove("show"));
-  $("licModal").addEventListener("click", (e) => { if(e.target.id === "licModal") $("licModal").classList.remove("show"); });
-
-  $("modalSave").addEventListener("click", async () => {
-    showAlert($("modalErr"), "");
-    showAlert($("modalOk"), "");
-    const device = $("mDevice").value.trim();
-    const username = $("mUser").value.trim();
-    const level = $("mLevel").value;
-    const expiry = $("mExpiry").value;
-
-    if(!device || !username || !level || !expiry){
-      showAlert($("modalErr"), "All fields are required.", "err");
-      return;
-    }
-
-    if(expiry < todayISO()){
-      showAlert($("modalErr"), "Expiry date cannot be in the past.", "err");
-      return;
-    }
-
-    const payload = { device_id: device, username, level, expiry, status: "active" };
-
-    try{
-      $("modalSave").textContent = "Saving…";
-      if(state.modalMode === "create"){
-        await fetchJSON(authedUrl("/admin/licenses"), {
-          method:"POST",
-          headers: {"Content-Type":"application/json"},
-          body: JSON.stringify(payload)
-        });
-      }else{
-        await fetchJSON(authedUrl("/admin/licenses", {device_id: state.modalDevice || device}), {
-          method:"PUT",
-          headers: {"Content-Type":"application/json"},
-          body: JSON.stringify(payload)
-        });
-      }
-      $("licModal").classList.remove("show");
-      state.cache.clear();
-      await loadDashboard(true);
-      await loadLicenses();
-    }catch(e){
-      showAlert($("modalErr"), "Save failed: " + (e.message || "unknown"), "err");
-    }finally{
-      $("modalSave").textContent = "Save";
-    }
-  });
-
-  // Tags + helpers
-  function isExpiredDate(expiry){
-    if(!expiry) return true;
-    const end = new Date(String(expiry) + "T23:59:59.999Z");
-    return end.getTime() < Date.now();
-  }
-
-  function tagLevel(level){
-    const v = (level || "").toLowerCase();
-    if(v === "premium") return `<span class="tag good">premium</span>`;
-    if(v === "lite") return `<span class="tag">lite</span>`;
-    return `<span class="tag warn">${escapeHtml(level||"unknown")}</span>`;
-  }
-
-  function tagSessionStatus(st){
-    const v = (st || "").toLowerCase();
-    if(v === "ended") return `<span class="tag good">ended</span>`;
-    if(v === "running") return `<span class="tag warn">running</span>`;
-    if(v === "aborted") return `<span class="tag bad">aborted</span>`;
-    return `<span class="tag">${escapeHtml(st||"")}</span>`;
-  }
-
-  function tagResult(res){
-    const v = (res || "").toLowerCase();
-    if(v === "valid" || v === "ok") return `<span class="tag good">${escapeHtml(res)}</span>`;
-    if(v === "expired") return `<span class="tag warn">${escapeHtml(res)}</span>`;
-    if(v === "unauthorised" || v === "unauthorized" || v === "inactive") return `<span class="tag bad">${escapeHtml(res)}</span>`;
-    return `<span class="tag">${escapeHtml(res || "")}</span>`;
-  }
-
-  function tagStatus(status, expiry){
-    const st = (status || "").toLowerCase();
-    const expired = isExpiredDate(expiry);
-    if(st !== "active") return `<span class="tag bad">${escapeHtml(status||"inactive")}</span>`;
-    if(expired) return `<span class="tag warn">active • expired</span>`;
-    return `<span class="tag good">active</span>`;
-  }
-
-  function escapeHtml(s){
-    return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-  }
-  function escapeAttr(s){ return String(s ?? "").replace(/"/g, "&quot;"); }
-
-  // Startup
+  // ---------- STARTUP ----------
   (async function init(){
-    applyExpiryMin();
+    $("mExpiry").min = todayISO();
     setBackendLine("Connecting…");
     await pingBackend();
 
-    const saved = sessionStorage.getItem("adminToken");
-    if(saved){
+    const savedToken = sessionStorage.getItem("adminToken");
+    if(savedToken){
       try{
-        state.token = saved;
-        await validateToken(saved);
+        state.token = savedToken;
+        await validateToken(savedToken);
         setLoggedIn(true);
         showView("dash");
-        await loadDashboard(false);
+        await loadDashboard();
       }catch{
         logout();
       }
@@ -1578,6 +1772,7 @@
       showView("dash");
     }
   })();
+
 })();
 </script>
 </div>
