@@ -5,110 +5,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Golf Licenses Admin</title>
   <style>
-    body { font-family: system-ui, Arial; margin: 0; background:#0b1020; color:#e8ecff; }
-    header { padding:16px; border-bottom:1px solid rgba(255,255,255,.1); display:flex; gap:10px; align-items:center; }
-    .badge { padding:4px 10px; border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:12px; opacity:.9;}
-    main { padding:16px; max-width:1100px; margin:0 auto; }
-    .grid { display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-    .card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 14px; }
-    input, select, button, textarea { width:100%; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.25); color:#e8ecff; }
-    button { cursor:pointer; background:#5b5cff; border:none; font-weight:600; }
-    button.secondary { background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); }
-    table { width:100%; border-collapse: collapse; font-size: 14px; }
-    th, td { padding:10px; border-bottom: 1px solid rgba(255,255,255,.12); vertical-align: top; }
-    th { text-align:left; opacity:.85; }
-    .row { display:flex; gap:10px; flex-wrap: wrap; }
-    .row > div { flex: 1 1 220px; }
-    .muted { opacity:.75; font-size: 13px; }
-    .pill { display:inline-block; padding: 3px 10px; border-radius:999px; font-size:12px; border:1px solid rgba(255,255,255,.18); }
-    .ok { border-color: rgba(0,255,130,.35); color: #b7ffd8;}
-    .warn { border-color: rgba(255,200,0,.35); color: #ffe7a3;}
-    .bad { border-color: rgba(255,80,80,.35); color: #ffb9b9;}
-    .footer { opacity:.7; padding: 16px; text-align:center; }
-    code { background: rgba(255,255,255,.08); padding:2px 6px; border-radius: 6px; }
+    :root{
+      --bg:#0b1020; --card:#111a33; --muted:#9db0ff; --text:#e8ecff;
+      --ok:#27e59a; --bad:#ff5577; --btn:#5b6cff; --btn2:#2a335f;
+      --border:#22306a;
+    }
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+    body{margin:0;background:linear-gradient(180deg,#070a14 0%, #0b1020 30%, #070a14 100%);color:var(--text)}
+    header{position:sticky;top:0;background:rgba(7,10,20,.9);backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,48,106,.5);z-index:10}
+    .wrap{max-width:980px;margin:0 auto;padding:14px 14px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{padding:6px 10px;border:1px solid rgba(34,48,106,.8);border-radius:999px;color:var(--muted);font-size:12px}
+    h1{margin:0;font-size:18px}
+    main{max-width:980px;margin:0 auto;padding:14px}
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
+    .card{background:rgba(17,26,51,.8);border:1px solid rgba(34,48,106,.9);border-radius:16px;padding:14px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+    .card h2{margin:0 0 10px 0;font-size:16px}
+    label{display:block;font-size:12px;color:var(--muted);margin:8px 0 6px}
+    input,select,textarea{
+      width:100%;padding:12px;border-radius:12px;border:1px solid rgba(34,48,106,.9);
+      background:#0b1430;color:var(--text);outline:none
+    }
+    textarea{min-height:92px;resize:vertical}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    button{
+      border:0;border-radius:12px;padding:11px 14px;color:white;background:var(--btn);
+      cursor:pointer;font-weight:600
+    }
+    button.secondary{background:var(--btn2);border:1px solid rgba(34,48,106,.9)}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    .status{margin-top:8px;font-size:13px}
+    .ok{color:var(--ok)} .bad{color:var(--bad)} .muted{color:var(--muted)}
+    pre{
+      margin:10px 0 0; padding:12px; background:rgba(6,8,16,.7);
+      border:1px solid rgba(34,48,106,.6); border-radius:12px; overflow:auto; max-height:320px
+    }
+    table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+    th,td{padding:8px;border-bottom:1px solid rgba(34,48,106,.55);vertical-align:top}
+    th{color:var(--muted);font-weight:700;text-align:left}
+    .small{font-size:12px}
   </style>
 </head>
 <body>
-  <header>
-    <div style="font-weight:800;">Golf Licenses Admin</div>
-    <span class="badge">GitHub Pages</span>
-    <span class="badge" id="apiBadge">API: not set</span>
-  </header>
-
-  <main>
-    <div class="grid">
-      <div class="card">
-        <h3 style="margin:0 0 10px 0;">1) Connect</h3>
-        <div class="row">
-          <div>
-            <label class="muted">Backend API base URL</label>
-            <input id="apiBase" placeholder="https://golf-licenses-production.up.railway.app" />
-            <div class="muted" style="margin-top:8px;">Must be your Railway backend URL.</div>
-          </div>
-          <div>
-            <label class="muted">Admin Token</label>
-            <input id="adminToken" placeholder="paste ADMIN_TOKEN here" />
-            <div class="muted" style="margin-top:8px;">This stays in your browser only.</div>
-          </div>
-        </div>
-        <div style="display:flex; gap:10px; margin-top:12px;">
-          <button id="btnSave">Save</button>
-          <button class="secondary" id="btnTest">Test Connection</button>
-        </div>
-        <div id="connectMsg" class="muted" style="margin-top:10px;"></div>
-      </div>
-
-      <div class="card">
-        <h3 style="margin:0 0 10px 0;">2) Quick Stats</h3>
-        <div id="statsBox" class="muted">Connect first, then load stats.</div>
-        <div style="display:flex; gap:10px; margin-top:12px;">
-          <button id="btnLoadStats">Load Stats</button>
-          <button class="secondary" id="btnLoadEvents">Load Latest Events</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:12px;">
-      <h3 style="margin:0 0 10px 0;">Licenses</h3>
+<header>
+  <div class="wrap">
+    <div class="row" style="justify-content:space-between">
       <div class="row">
-        <div>
-          <label class="muted">Search (device_id or username)</label>
-          <input id="searchQ" placeholder="527484932 or username" />
-        </div>
-        <div>
-          <label class="muted">Filter by status</label>
-          <select id="filterStatus">
-            <option value="">All</option>
-            <option value="active">active</option>
-            <option value="inactive">inactive</option>
-            <option value="expired">expired</option>
-          </select>
-        </div>
-        <div>
-          <label class="muted">Filter by level</label>
-          <select id="filterLevel">
-            <option value="">All</option>
-            <option value="lite">lite</option>
-            <option value="premium">premium</option>
-          </select>
-        </div>
+        <h1>Golf Licenses Admin</h1>
+        <span class="pill" id="pillHost">GitHub Pages</span>
+        <span class="pill" id="pillApi">API: not set</span>
       </div>
-      <div style="display:flex; gap:10px; margin-top:12px;">
-        <button id="btnLoadLicenses">Load Licenses</button>
-        <button class="secondary" id="btnNewLicense">New License</button>
+      <div class="row">
+        <span class="pill" id="pillAuth">Auth: not set</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <div class="card">
+      <h2>1) Connect</h2>
+
+      <label>Backend API base URL</label>
+      <input id="baseUrl" placeholder="https://golf-licenses-production.up.railway.app" />
+
+      <label>Admin Token</label>
+      <input id="adminToken" placeholder="paste ADMIN_TOKEN here" />
+
+      <div class="btns">
+        <button id="btnSave">Save</button>
+        <button class="secondary" id="btnTest">Test Connection</button>
       </div>
 
-      <div id="licensesTable" style="margin-top:12px;"></div>
+      <div class="status" id="connectStatus" class="muted">Not connected.</div>
+      <div class="small muted">✅ Token is stored only in your browser (localStorage).</div>
     </div>
 
-    <div class="card" style="margin-top:12px;">
-      <h3 style="margin:0 0 10px 0;">Latest Events (unauthorised attempts included)</h3>
-      <div id="eventsTable" class="muted">Click “Load Latest Events”.</div>
+    <div class="card">
+      <h2>2) Quick Stats</h2>
+      <div class="btns">
+        <button id="btnStats">Load Stats</button>
+        <button class="secondary" id="btnEvents">Load Latest Events</button>
+        <button class="secondary" id="btnSessions">Load Latest Sessions</button>
+      </div>
+      <div class="status" id="statsStatus" class="muted">—</div>
+      <pre id="statsOut">{}</pre>
     </div>
+  </div>
 
-    <div class="footer">If anything shows “401/Forbidden”, your <code>ADMIN_TOKEN</code> in Railway doesn’t match what you pasted here.</div>
-  </main>
+  <div class="card" style="margin-top:12px">
+    <h2>3) Viewer</h2>
+    <div class="muted small">
+      If Stats shows 401 but Events works, your backend doesn’t have /admin/stats yet — that’s OK.
+      We can add it later without breaking anything.
+    </div>
+    <table id="table"></table>
+  </div>
+</main>
 
-  <script src="./app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
