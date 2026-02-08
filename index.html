@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Golf Licenses Admin</title>
+
+  <style>
+    body { margin:0; font-family: system-ui, Arial, sans-serif; background:#0b1220; color:#e6edf3; }
+    header { background:#0f1b33; border-bottom:1px solid #22314f; }
+    .wrap { max-width:1100px; margin:auto; padding:16px; }
+    h1 { margin:0; font-size:18px; }
+    .muted { color:#9fb1c7; font-size:12px; }
+    .card { background:#0f1b33; border:1px solid #22314f; border-radius:14px; padding:16px; margin-top:14px; }
+    input, select, button {
+      background:#0b1220; color:#e6edf3;
+      border:1px solid #22314f; border-radius:10px;
+      padding:10px 12px;
+    }
+    button { cursor:pointer; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; }
+    .row > * { flex:1; min-width:200px; }
+    pre { background:#0b1220; padding:12px; border-radius:10px; overflow:auto; }
+    .pill { display:inline-block; padding:4px 10px; border-radius:999px; border:1px solid #22314f; margin:4px; }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <h1>Golf License Admin</h1>
+    <div class="muted">GitHub Pages UI → Railway API → Supabase DB</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <b>1) Connect</b>
+    <div class="row" style="margin-top:10px">
+      <input id="baseUrl" placeholder="Backend URL" />
+      <input id="token" placeholder="ADMIN_TOKEN" />
+      <button onclick="save()">Save</button>
+      <button onclick="clearSaved()">Clear</button>
+    </div>
+    <div id="connMsg" class="muted"></div>
+  </div>
+
+  <div class="card">
+    <b>2) Dashboard</b>
+    <div class="row" style="margin-top:10px">
+      <button onclick="loadStats()">Load Stats</button>
+      <button onclick="loadLicenses()">Load Licenses</button>
+      <button onclick="loadSessions()">Load Sessions</button>
+      <button onclick="loadEvents()">Load Events</button>
+    </div>
+    <div id="stats"></div>
+  </div>
+
+  <div class="card">
+    <b>3) Add / Update License</b>
+    <div class="row" style="margin-top:10px">
+      <input id="licDevice" placeholder="device_id" />
+      <input id="licUser" placeholder="username" />
+      <select id="licLevel">
+        <option value="lite">lite</option>
+        <option value="premium">premium</option>
+      </select>
+      <input id="licExpiry" placeholder="YYYY-MM-DD" />
+      <select id="licStatus">
+        <option value="active">active</option>
+        <option value="inactive">inactive</option>
+      </select>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button onclick="addLicense()">Add</button>
+      <button onclick="updateLicense()">Update</button>
+      <button onclick="deleteLicense()">Delete</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <b>4) Output</b>
+    <pre id="out">No data yet</pre>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+  </html>
