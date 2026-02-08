@@ -1,193 +1,208 @@
-// Simple Admin UI (no frameworks) - works on GitHub Pages
+// Golf Licenses Admin (GitHub Pages)
+// FIXED: sends token as ?token=... because your backend checks req.query.token
+// ALSO sends Authorization header for future compatibility.
 
-function getConfig() {
-  return {
-    apiBase: localStorage.getItem("apiBase") || "",
-    adminToken: localStorage.getItem("adminToken") || ""
+(function () {
+  const els = {
+    baseUrl: document.getElementById("baseUrl"),
+    adminToken: document.getElementById("adminToken"),
+    btnSave: document.getElementById("btnSave"),
+    btnTest: document.getElementById("btnTest"),
+    btnStats: document.getElementById("btnStats"),
+    btnEvents: document.getElementById("btnEvents"),
+    btnSessions: document.getElementById("btnSessions"),
+    connectStatus: document.getElementById("connectStatus"),
+    statsStatus: document.getElementById("statsStatus"),
+    statsOut: document.getElementById("statsOut"),
+    pillApi: document.getElementById("pillApi"),
+    pillAuth: document.getElementById("pillAuth"),
+    table: document.getElementById("table"),
   };
-}
-function setConfig(apiBase, adminToken) {
-  localStorage.setItem("apiBase", apiBase.trim());
-  localStorage.setItem("adminToken", adminToken.trim());
-}
 
-function badge() {
-  const { apiBase } = getConfig();
-  const el = document.getElementById("apiBadge");
-  el.textContent = apiBase ? `API: ${apiBase}` : "API: not set";
-}
-
-async function api(path, opts = {}) {
-  const { apiBase, adminToken } = getConfig();
-  if (!apiBase) throw new Error("API base URL not set");
-  const url = apiBase.replace(/\/$/, "") + path;
-
-  const headers = Object.assign(
-    { "Content-Type": "application/json", "x-admin-token": adminToken || "" },
-    opts.headers || {}
-  );
-
-  const res = await fetch(url, { ...opts, headers });
-  const text = await res.text();
-  let data;
-  try { data = JSON.parse(text); } catch { data = text; }
-
-  if (!res.ok) {
-    const msg = typeof data === "string" ? data : (data.error || JSON.stringify(data));
-    throw new Error(`${res.status} ${res.statusText}: ${msg}`);
+  function cleanBaseUrl(url) {
+    return (url || "").trim().replace(/\/+$/, "");
   }
-  return data;
-}
 
-function pillForStatus(status) {
-  status = (status || "").toLowerCase();
-  if (status === "active" || status === "valid" || status === "ok") return `<span class="pill ok">${status}</span>`;
-  if (status === "expired") return `<span class="pill warn">expired</span>`;
-  return `<span class="pill bad">${status || "unknown"}</span>`;
-}
-
-function fmt(v) {
-  if (v == null) return "";
-  return String(v);
-}
-
-async function testConnection() {
-  const msg = document.getElementById("connectMsg");
-  msg.textContent = "Testing...";
-  try {
-    const r = await api("/", { method: "GET" });
-    msg.textContent = `✅ Connected: ${r.service} @ ${r.time}`;
-  } catch (e) {
-    msg.textContent = `❌ ${e.message}`;
+  function getSaved() {
+    return {
+      baseUrl: cleanBaseUrl(localStorage.getItem("gl_baseUrl") || ""),
+      token: (localStorage.getItem("gl_adminToken") || "").trim(),
+    };
   }
-}
 
-async function loadStats() {
-  const box = document.getElementById("statsBox");
-  box.textContent = "Loading...";
-  try {
-    // These endpoints must exist in your backend.
-    // If your backend uses different paths, tell me and I’ll adapt the JS.
-    const s = await api("/admin/stats", { method: "GET" });
-
-    box.innerHTML = `
-      <div class="grid">
-        <div class="card"><div class="muted">Total licenses</div><div style="font-size:26px;font-weight:800;">${fmt(s.total_licenses)}</div></div>
-        <div class="card"><div class="muted">Active</div><div style="font-size:26px;font-weight:800;">${fmt(s.active_licenses)}</div></div>
-        <div class="card"><div class="muted">Expired</div><div style="font-size:26px;font-weight:800;">${fmt(s.expired_licenses)}</div></div>
-        <div class="card"><div class="muted">Lite</div><div style="font-size:26px;font-weight:800;">${fmt(s.lite_licenses)}</div></div>
-        <div class="card"><div class="muted">Premium</div><div style="font-size:26px;font-weight:800;">${fmt(s.premium_licenses)}</div></div>
-        <div class="card"><div class="muted">Unauthorised attempts (24h)</div><div style="font-size:26px;font-weight:800;">${fmt(s.unauthorised_24h)}</div></div>
-      </div>
-      <div class="muted" style="margin-top:10px;">Sessions today: <b>${fmt(s.sessions_today)}</b> • Total duration today: <b>${fmt(s.duration_sec_today)}</b> sec</div>
-    `;
-  } catch (e) {
-    box.textContent = `❌ ${e.message}`;
+  function save(baseUrl, token) {
+    localStorage.setItem("gl_baseUrl", cleanBaseUrl(baseUrl));
+    localStorage.setItem("gl_adminToken", (token || "").trim());
   }
-}
 
-async function loadEvents() {
-  const box = document.getElementById("eventsTable");
-  box.textContent = "Loading...";
-  try {
-    const rows = await api("/admin/events?limit=50", { method: "GET" });
-    box.innerHTML = renderEvents(rows);
-  } catch (e) {
-    box.textContent = `❌ ${e.message}`;
+  function setPills() {
+    const { baseUrl, token } = getSaved();
+    els.pillApi.textContent = baseUrl ? `API: ${baseUrl}` : "API: not set";
+    els.pillAuth.textContent = token ? "Auth: set" : "Auth: not set";
   }
-}
 
-function renderEvents(rows) {
-  if (!Array.isArray(rows) || rows.length === 0) return `<div class="muted">No events.</div>`;
-  const html = rows.map(r => `
-    <tr>
-      <td>${fmt(r.created_at)}</td>
-      <td>${fmt(r.device_id)}</td>
-      <td>${fmt(r.event)}</td>
-      <td>${pillForStatus(r.result)}</td>
-      <td class="muted">${fmt(r.ip || "")}</td>
-    </tr>
-  `).join("");
-  return `
-    <table>
-      <thead><tr>
-        <th>time</th><th>device</th><th>event</th><th>result</th><th>ip</th>
-      </tr></thead>
-      <tbody>${html}</tbody>
-    </table>
-  `;
-}
-
-async function loadLicenses() {
-  const box = document.getElementById("licensesTable");
-  box.textContent = "Loading...";
-  try {
-    const q = document.getElementById("searchQ").value.trim();
-    const status = document.getElementById("filterStatus").value;
-    const level = document.getElementById("filterLevel").value;
-
-    const params = new URLSearchParams();
-    if (q) params.set("q", q);
-    if (status) params.set("status", status);
-    if (level) params.set("level", level);
-
-    const rows = await api(`/admin/licenses?${params.toString()}`, { method: "GET" });
-    box.innerHTML = renderLicenses(rows);
-  } catch (e) {
-    box.textContent = `❌ ${e.message}`;
+  function qs(params) {
+    const s = new URLSearchParams();
+    Object.entries(params || {}).forEach(([k, v]) => {
+      if (v === undefined || v === null || v === "") return;
+      s.set(k, String(v));
+    });
+    return s.toString();
   }
-}
 
-function renderLicenses(rows) {
-  if (!Array.isArray(rows) || rows.length === 0) return `<div class="muted">No licenses found.</div>`;
-  const html = rows.map(r => `
-    <tr>
-      <td><code>${fmt(r.device_id)}</code></td>
-      <td>${fmt(r.username)}</td>
-      <td>${fmt(r.level)}</td>
-      <td>${fmt(r.expiry)}</td>
-      <td>${pillForStatus(r.status)}</td>
-      <td class="muted">${fmt(r.updated_at || r.created_at || "")}</td>
-    </tr>
-  `).join("");
+  // Builds URL and ALWAYS adds token as query string because backend checks req.query.token
+  function buildUrl(path, extraParams = {}) {
+    const { baseUrl, token } = getSaved();
+    if (!baseUrl) throw new Error("API base URL not set");
+    if (!token) throw new Error("Admin token not set");
 
-  return `
-    <table>
-      <thead><tr>
-        <th>device_id</th><th>username</th><th>level</th><th>expiry</th><th>status</th><th>updated</th>
-      </tr></thead>
-      <tbody>${html}</tbody>
-    </table>
-    <div class="muted" style="margin-top:10px;">
-      Editing/creating licenses needs backend admin endpoints (we’ll add next).
-    </div>
-  `;
-}
+    const params = { ...extraParams, token }; // IMPORTANT
+    const query = qs(params);
+    return `${baseUrl}${path}${query ? "?" + query : ""}`;
+  }
 
-function wire() {
-  // Load saved config into inputs
-  const cfg = getConfig();
-  document.getElementById("apiBase").value = cfg.apiBase;
-  document.getElementById("adminToken").value = cfg.adminToken;
-  badge();
+  async function apiGet(path, params) {
+    const { token } = getSaved();
+    const url = buildUrl(path, params);
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        // Future proof (if you later switch backend to Bearer header)
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json",
+      },
+    });
 
-  document.getElementById("btnSave").addEventListener("click", () => {
-    setConfig(
-      document.getElementById("apiBase").value,
-      document.getElementById("adminToken").value
-    );
-    badge();
-    document.getElementById("connectMsg").textContent = "✅ Saved.";
-  });
+    const text = await res.text();
+    let json;
+    try { json = JSON.parse(text); } catch { json = { raw: text }; }
 
-  document.getElementById("btnTest").addEventListener("click", testConnection);
-  document.getElementById("btnLoadStats").addEventListener("click", loadStats);
-  document.getElementById("btnLoadEvents").addEventListener("click", loadEvents);
-  document.getElementById("btnLoadLicenses").addEventListener("click", loadLicenses);
+    if (!res.ok) {
+      const msg = json && (json.error || json.message) ? (json.error || json.message) : `${res.status}`;
+      const err = new Error(`${res.status} : ${msg}`);
+      err.status = res.status;
+      err.payload = json;
+      throw err;
+    }
+    return json;
+  }
 
-  document.getElementById("btnNewLicense").addEventListener("click", () => {
-    alert("Next step: we’ll add create/edit/delete license endpoints in your backend, then wire a form here.");
-  });
-}
+  function pretty(obj) {
+    return JSON.stringify(obj, null, 2);
+  }
 
-wire();
+  function showStatus(el, ok, msg) {
+    el.className = "status " + (ok ? "ok" : "bad");
+    el.textContent = msg;
+  }
+
+  function renderTable(rows) {
+    if (!Array.isArray(rows) || rows.length === 0) {
+      els.table.innerHTML = `<tr><th>Empty</th></tr><tr><td class="muted">No rows returned.</td></tr>`;
+      return;
+    }
+
+    // Pick columns from first row
+    const cols = Object.keys(rows[0]);
+    const thead = `<tr>${cols.map(c => `<th>${c}</th>`).join("")}</tr>`;
+    const tbody = rows.slice(0, 100).map(r => {
+      return `<tr>${cols.map(c => `<td>${escapeHtml(formatCell(r[c]))}</td>`).join("")}</tr>`;
+    }).join("");
+
+    els.table.innerHTML = thead + tbody;
+  }
+
+  function formatCell(v) {
+    if (v === null || v === undefined) return "";
+    if (typeof v === "object") return JSON.stringify(v);
+    return String(v);
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  async function testConnection() {
+    try {
+      // Your backend root "/" returns: {status:"ok", service:"license-server", time:"..."}
+      const { baseUrl, token } = getSaved();
+      if (!baseUrl || !token) throw new Error("Set API base URL + Admin token first");
+
+      // Try an admin endpoint first (more meaningful than /)
+      // If /admin/stats doesn't exist yet, we'll fall back to /admin/events.
+      try {
+        await apiGet("/admin/stats");
+        showStatus(els.connectStatus, true, `✅ Connected (admin ok) @ ${new Date().toISOString()}`);
+      } catch (e) {
+        // fallback to events (exists in your uploaded backend)
+        await apiGet("/admin/events", { limit: 1 });
+        showStatus(els.connectStatus, true, `✅ Connected (events ok) @ ${new Date().toISOString()}`);
+      }
+      setPills();
+    } catch (e) {
+      showStatus(els.connectStatus, false, `❌ ${e.message}`);
+    }
+  }
+
+  async function loadStats() {
+    els.statsOut.textContent = "{}";
+    try {
+      const data = await apiGet("/admin/stats");
+      showStatus(els.statsStatus, true, "✅ Stats loaded");
+      els.statsOut.textContent = pretty(data);
+      // If it returns a single object, show it as JSON only
+      els.table.innerHTML = "";
+    } catch (e) {
+      showStatus(els.statsStatus, false, `❌ ${e.message}`);
+      els.statsOut.textContent = pretty(e.payload || { error: e.message });
+    }
+  }
+
+  async function loadEvents() {
+    els.statsOut.textContent = "{}";
+    try {
+      const data = await apiGet("/admin/events", { limit: 50 });
+      showStatus(els.statsStatus, true, "✅ Events loaded");
+      els.statsOut.textContent = pretty(data);
+      renderTable(data);
+    } catch (e) {
+      showStatus(els.statsStatus, false, `❌ ${e.message}`);
+      els.statsOut.textContent = pretty(e.payload || { error: e.message });
+    }
+  }
+
+  async function loadSessions() {
+    els.statsOut.textContent = "{}";
+    try {
+      const data = await apiGet("/admin/sessions", { limit: 50 });
+      showStatus(els.statsStatus, true, "✅ Sessions loaded");
+      els.statsOut.textContent = pretty(data);
+      renderTable(data);
+    } catch (e) {
+      showStatus(els.statsStatus, false, `❌ ${e.message}`);
+      els.statsOut.textContent = pretty(e.payload || { error: e.message });
+    }
+  }
+
+  // Init
+  (function init() {
+    const saved = getSaved();
+    els.baseUrl.value = saved.baseUrl || "https://golf-licenses-production.up.railway.app";
+    els.adminToken.value = saved.token || "";
+    setPills();
+
+    els.btnSave.addEventListener("click", () => {
+      save(els.baseUrl.value, els.adminToken.value);
+      setPills();
+      showStatus(els.connectStatus, true, "✅ Saved.");
+    });
+
+    els.btnTest.addEventListener("click", testConnection);
+    els.btnStats.addEventListener("click", loadStats);
+    els.btnEvents.addEventListener("click", loadEvents);
+    els.btnSessions.addEventListener("click", loadSessions);
+  })();
+})();
