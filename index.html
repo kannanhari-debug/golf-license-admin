@@ -1,110 +1,818 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Golf Licenses Admin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Golf License Admin Panel</title>
   <style>
-    :root{
-      --bg:#0b1020; --card:#111a33; --muted:#9db0ff; --text:#e8ecff;
-      --ok:#27e59a; --bad:#ff5577; --btn:#5b6cff; --btn2:#2a335f;
-      --border:#22306a;
+    /* Basic reset and typography */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f5f5f5;
+      color: #333;
     }
-    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
-    body{margin:0;background:linear-gradient(180deg,#070a14 0%, #0b1020 30%, #070a14 100%);color:var(--text)}
-    header{position:sticky;top:0;background:rgba(7,10,20,.9);backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,48,106,.5);z-index:10}
-    .wrap{max-width:980px;margin:0 auto;padding:14px 14px}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .pill{padding:6px 10px;border:1px solid rgba(34,48,106,.8);border-radius:999px;color:var(--muted);font-size:12px}
-    h1{margin:0;font-size:18px}
-    main{max-width:980px;margin:0 auto;padding:14px}
-    .grid{display:grid;grid-template-columns:1fr;gap:12px}
-    @media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
-    .card{background:rgba(17,26,51,.8);border:1px solid rgba(34,48,106,.9);border-radius:16px;padding:14px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
-    .card h2{margin:0 0 10px 0;font-size:16px}
-    label{display:block;font-size:12px;color:var(--muted);margin:8px 0 6px}
-    input,select,textarea{
-      width:100%;padding:12px;border-radius:12px;border:1px solid rgba(34,48,106,.9);
-      background:#0b1430;color:var(--text);outline:none
+    h1, h2 {
+      margin: 0.5em 0;
+      color: #333;
     }
-    textarea{min-height:92px;resize:vertical}
-    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    button{
-      border:0;border-radius:12px;padding:11px 14px;color:white;background:var(--btn);
-      cursor:pointer;font-weight:600
+    /* Container */
+    .container {
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
     }
-    button.secondary{background:var(--btn2);border:1px solid rgba(34,48,106,.9)}
-    button:disabled{opacity:.55;cursor:not-allowed}
-    .status{margin-top:8px;font-size:13px}
-    .ok{color:var(--ok)} .bad{color:var(--bad)} .muted{color:var(--muted)}
-    pre{
-      margin:10px 0 0; padding:12px; background:rgba(6,8,16,.7);
-      border:1px solid rgba(34,48,106,.6); border-radius:12px; overflow:auto; max-height:320px
+    /* Navigation tabs */
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      background: #3f51b5;
     }
-    table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
-    th,td{padding:8px;border-bottom:1px solid rgba(34,48,106,.55);vertical-align:top}
-    th{color:var(--muted);font-weight:700;text-align:left}
-    .small{font-size:12px}
+    nav button {
+      flex: 1;
+      padding: 14px 20px;
+      background: #3f51b5;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    nav button:hover, nav button:focus {
+      background: #303f9f;
+    }
+    nav button.active {
+      background: #283593;
+    }
+    /* Login form */
+    #login-section {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    #login-section label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    #login-section input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+    #login-section button {
+      width: 100%;
+      padding: 10px;
+      background: #3f51b5;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #login-section button:hover {
+      background: #303f9f;
+    }
+    /* Sections */
+    section {
+      display: none;
+      padding: 20px;
+      background: white;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    section.active {
+      display: block;
+    }
+    /* Forms */
+    form {
+      margin-bottom: 20px;
+    }
+    form input, form select {
+      padding: 6px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    form label {
+      margin-right: 5px;
+    }
+    form button {
+      padding: 6px 12px;
+      margin-top: 10px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    form button:hover {
+      background: #45a049;
+    }
+    /* Table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+    /* Buttons in tables */
+    .btn-small {
+      padding: 4px 8px;
+      font-size: 13px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+    }
+    .edit-btn {
+      background: #2196F3;
+      color: white;
+    }
+    .delete-btn {
+      background: #f44336;
+      color: white;
+    }
+    .export-btn {
+      background: #757575;
+      color: white;
+      margin-right: 10px;
+    }
+    /* Feedback messages */
+    .message {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .error {
+      background: #ffdddd;
+      color: #d8000c;
+    }
+    .loading {
+      color: #333;
+      font-style: italic;
+    }
+    /* Responsive adjustments */
+    @media(max-width: 600px) {
+      nav button { padding: 10px; font-size: 14px; }
+      th, td { font-size: 12px; padding: 6px; }
+    }
   </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <div class="row" style="justify-content:space-between">
-      <div class="row">
-        <h1>Golf Licenses Admin</h1>
-        <span class="pill" id="pillHost">GitHub Pages</span>
-        <span class="pill" id="pillApi">API: not set</span>
-      </div>
-      <div class="row">
-        <span class="pill" id="pillAuth">Auth: not set</span>
-      </div>
+<div class="container">
+  <h1>Golf License Admin Panel</h1>
+
+  <!-- Navigation Tabs (will appear after login) -->
+  <nav id="main-nav" style="display:none;">
+    <button data-section="licenses" class="active">Licenses</button>
+    <button data-section="sessions">Sessions</button>
+    <button data-section="events">Events</button>
+    <button data-section="unauthorised">Unauthorized</button>
+    <button data-section="stats">Stats</button>
+    <button id="logout-btn" style="background:#b71c1c;">Logout</button>
+  </nav>
+
+  <!-- Login Section -->
+  <section id="login-section">
+    <h2>Admin Login</h2>
+    <div class="message error" id="login-error" style="display:none;"></div>
+    <label for="password">Admin Password:</label>
+    <input type="password" id="password" placeholder="Enter admin password">
+    <label for="token">Admin Token:</label>
+    <input type="text" id="token" placeholder="Enter admin token">
+    <button id="login-btn">Login</button>
+  </section>
+
+  <!-- Licenses Section -->
+  <section id="licenses-section">
+    <h2>Manage Licenses</h2>
+    <!-- Filter -->
+    <form id="license-filter-form">
+      <label for="filter-device">Filter by Device ID:</label>
+      <input type="text" id="filter-device" placeholder="Device ID">
+      <button type="submit">Filter</button>
+      <button type="button" id="clear-license-filter">Clear Filter</button>
+    </form>
+    <!-- Add/Edit Form (hidden by default) -->
+    <form id="license-form" style="display:none;">
+      <h3 id="license-form-title">Add New License</h3>
+      <label>Device ID: <input type="text" id="device_id" required></label>
+      <label>Username: <input type="text" id="username" required></label>
+      <label>Level: 
+        <select id="level" required>
+          <option value="">Select</option>
+          <option value="lite">Lite</option>
+          <option value="premium">Premium</option>
+        </select>
+      </label>
+      <label>Expiry: <input type="date" id="expiry" required></label>
+      <label>Status: 
+        <select id="status" required>
+          <option value="">Select</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </label>
+      <button type="submit" id="license-form-submit">Save</button>
+      <button type="button" id="license-form-cancel">Cancel</button>
+      <div class="message error" id="license-form-error" style="display:none;"></div>
+    </form>
+    <!-- Add License button -->
+    <button id="add-license-btn" style="margin-bottom: 10px;">Add License</button>
+    <!-- Export buttons -->
+    <button class="export-btn" id="export-licenses-csv">Export CSV</button>
+    <button class="export-btn" id="export-licenses-json">Export JSON</button>
+    <!-- Table -->
+    <div class="message loading" id="licenses-loading">Loading licenses...</div>
+    <div class="message error" id="licenses-error" style="display:none;"></div>
+    <table id="licenses-table">
+      <thead><tr>
+        <th>Device ID</th><th>Username</th><th>Level</th><th>Expiry</th><th>Status</th><th>Actions</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Sessions Section -->
+  <section id="sessions-section">
+    <h2>Session History</h2>
+    <!-- Filter -->
+    <form id="sessions-filter-form">
+      <label for="session-device">Filter by Device ID:</label>
+      <input type="text" id="session-device" placeholder="Device ID">
+      <button type="submit">Filter</button>
+      <button type="button" id="clear-sessions-filter">Clear Filter</button>
+    </form>
+    <!-- Export buttons -->
+    <button class="export-btn" id="export-sessions-csv">Export CSV</button>
+    <button class="export-btn" id="export-sessions-json">Export JSON</button>
+    <!-- Table -->
+    <div class="message loading" id="sessions-loading">Loading sessions...</div>
+    <div class="message error" id="sessions-error" style="display:none;"></div>
+    <table id="sessions-table">
+      <thead><tr>
+        <th>Session ID</th><th>Device ID</th><th>Level</th><th>Start Time</th><th>End Time</th><th>Status</th><th>Duration (sec)</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Events Section -->
+  <section id="events-section">
+    <h2>Event Logs</h2>
+    <!-- Filter -->
+    <form id="events-filter-form">
+      <label for="events-device">Device ID:</label>
+      <input type="text" id="events-device" placeholder="Device ID">
+      <label for="events-date">Date:</label>
+      <input type="date" id="events-date">
+      <button type="submit">Filter</button>
+      <button type="button" id="clear-events-filter">Clear Filter</button>
+    </form>
+    <!-- Export buttons -->
+    <button class="export-btn" id="export-events-csv">Export CSV</button>
+    <button class="export-btn" id="export-events-json">Export JSON</button>
+    <!-- Table -->
+    <div class="message loading" id="events-loading">Loading events...</div>
+    <div class="message error" id="events-error" style="display:none;"></div>
+    <table id="events-table">
+      <thead><tr>
+        <th>ID</th><th>Device ID</th><th>Event</th><th>Result</th><th>Created At</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Unauthorized Section -->
+  <section id="unauthorised-section">
+    <h2>Unauthorized Attempts</h2>
+    <button class="export-btn" id="export-unauth-csv">Export CSV</button>
+    <button class="export-btn" id="export-unauth-json">Export JSON</button>
+    <div class="message loading" id="unauth-loading">Loading unauthorized attempts...</div>
+    <div class="message error" id="unauth-error" style="display:none;"></div>
+    <table id="unauth-table">
+      <thead><tr>
+        <th>Device ID</th><th>Event</th><th>Result</th><th>Created At</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Stats Section -->
+  <section id="stats-section">
+    <h2>Usage Statistics</h2>
+    <div id="stats-loading" class="loading">Loading stats...</div>
+    <div id="stats-error" class="message error" style="display:none;"></div>
+    <div id="stats-content" style="display:none;">
+      <p>Total Licenses: <span id="stat-total">0</span></p>
+      <p>Active: <span id="stat-active">0</span></p>
+      <p>Expired: <span id="stat-expired">0</span></p>
+      <p>Lite: <span id="stat-lite">0</span></p>
+      <p>Premium: <span id="stat-premium">0</span></p>
     </div>
-  </div>
-</header>
+  </section>
 
-<main>
-  <div class="grid">
-    <div class="card">
-      <h2>1) Connect</h2>
+</div>
 
-      <label>Backend API base URL</label>
-      <input id="baseUrl" placeholder="https://golf-licenses-production.up.railway.app" />
+<script>
+(() => {
+  const API_BASE = 'https://golf-licenses-production.up.railway.app'; // TODO: replace with actual backend URL
 
-      <label>Admin Token</label>
-      <input id="adminToken" placeholder="paste ADMIN_TOKEN here" />
+  // Utility to download CSV/JSON
+  function downloadFile(data, filename, type) {
+    const blob = new Blob([data], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  }
 
-      <div class="btns">
-        <button id="btnSave">Save</button>
-        <button class="secondary" id="btnTest">Test Connection</button>
-      </div>
+  // Export table to CSV
+  function exportTableToCSV(tableId, filename) {
+    const rows = [];
+    const table = document.getElementById(tableId);
+    const trs = table.querySelectorAll('tr');
+    for (let i = 0; i < trs.length; i++) {
+      const cells = trs[i].querySelectorAll('td,th');
+      const row = [];
+      cells.forEach(cell => {
+        let text = cell.innerText.replace(/"/g, '""');
+        if (text.search(/,|"|\n/) >= 0) text = '"' + text + '"';
+        row.push(text);
+      });
+      rows.push(row.join(','));
+    }
+    const csv = rows.join('\n');
+    downloadFile(csv, filename, 'text/csv');
+  }
 
-      <div class="status" id="connectStatus" class="muted">Not connected.</div>
-      <div class="small muted">✅ Token is stored only in your browser (localStorage).</div>
-    </div>
+  // Export JSON
+  function exportDataToJSON(data, filename) {
+    const json = JSON.stringify(data, null, 2);
+    downloadFile(json, filename, 'application/json');
+  }
 
-    <div class="card">
-      <h2>2) Quick Stats</h2>
-      <div class="btns">
-        <button id="btnStats">Load Stats</button>
-        <button class="secondary" id="btnEvents">Load Latest Events</button>
-        <button class="secondary" id="btnSessions">Load Latest Sessions</button>
-      </div>
-      <div class="status" id="statsStatus" class="muted">—</div>
-      <pre id="statsOut">{}</pre>
-    </div>
-  </div>
+  // Show/hide sections
+  const sections = {
+    'licenses': document.getElementById('licenses-section'),
+    'sessions': document.getElementById('sessions-section'),
+    'events': document.getElementById('events-section'),
+    'unauthorised': document.getElementById('unauthorised-section'),
+    'stats': document.getElementById('stats-section')
+  };
+  let currentSection = 'licenses';
+  function showSection(name) {
+    Object.values(sections).forEach(sec => sec.classList.remove('active'));
+    sections[name].classList.add('active');
+    currentSection = name;
+    document.querySelectorAll('nav button').forEach(btn => {
+      if (btn.dataset.section === name) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+    if (name === 'stats') loadStats();
+  }
 
-  <div class="card" style="margin-top:12px">
-    <h2>3) Viewer</h2>
-    <div class="muted small">
-      If Stats shows 401 but Events works, your backend doesn’t have /admin/stats yet — that’s OK.
-      We can add it later without breaking anything.
-    </div>
-    <table id="table"></table>
-  </div>
-</main>
+  // Show login or UI
+  function showLogin(show) {
+    document.getElementById('login-section').style.display = show ? 'block' : 'none';
+    document.getElementById('main-nav').style.display = show ? 'none' : 'flex';
+  }
 
-<script src="app.js"></script>
+  // Logout
+  function logout() {
+    sessionStorage.removeItem('adminToken');
+    showLogin(true);
+  }
+  document.getElementById('logout-btn').addEventListener('click', logout);
+
+  // Navigation clicks
+  document.getElementById('main-nav').addEventListener('click', e => {
+    if (e.target.tagName === 'BUTTON' && e.target.dataset.section) {
+      showSection(e.target.dataset.section);
+    }
+  });
+
+  // On login
+  document.getElementById('login-btn').addEventListener('click', async () => {
+    const password = document.getElementById('password').value.trim();
+    const token = document.getElementById('token').value.trim();
+    const errorDiv = document.getElementById('login-error');
+    errorDiv.style.display = 'none';
+    if (!password) {
+      errorDiv.innerText = 'Password is required.'; errorDiv.style.display = 'block'; return;
+    }
+    if (!token) {
+      errorDiv.innerText = 'Admin token is required.'; errorDiv.style.display = 'block'; return;
+    }
+    try {
+      // Validate token via stats endpoint
+      const res = await fetch(`${API_BASE}/admin/stats?token=${encodeURIComponent(token)}`);
+      if (!res.ok) {
+        if (res.status === 401) throw new Error('Invalid admin token');
+        else throw new Error('Login failed');
+      }
+      sessionStorage.setItem('adminToken', token);
+      showLogin(false);
+      showSection('licenses');
+      loadLicenses();
+      loadStats();
+    } catch (err) {
+      errorDiv.innerText = err.message; errorDiv.style.display = 'block';
+    }
+  });
+
+  // Licenses logic
+  document.getElementById('add-license-btn').addEventListener('click', () => {
+    document.getElementById('license-form-title').innerText = 'Add New License';
+    document.getElementById('license-form').style.display = 'block';
+    ['device_id','username','level','expiry','status'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('device_id').disabled = false;
+    document.getElementById('license-form-error').style.display = 'none';
+    editMode = false;
+  });
+  document.getElementById('license-form-cancel').addEventListener('click', () => {
+    document.getElementById('license-form').style.display = 'none';
+  });
+  document.getElementById('license-filter-form').addEventListener('submit', e => {
+    e.preventDefault();
+    loadLicenses(document.getElementById('filter-device').value.trim());
+  });
+  document.getElementById('clear-license-filter').addEventListener('click', () => {
+    document.getElementById('filter-device').value = '';
+    loadLicenses();
+  });
+  document.getElementById('license-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const device = document.getElementById('device_id').value.trim();
+    const username = document.getElementById('username').value.trim();
+    const level = document.getElementById('level').value;
+    const expiry = document.getElementById('expiry').value;
+    const status = document.getElementById('status').value;
+    const errorDiv = document.getElementById('license-form-error');
+    errorDiv.style.display = 'none';
+    if (!device || !username || !level || !expiry || !status) {
+      errorDiv.innerText = 'All fields are required.'; errorDiv.style.display = 'block'; return;
+    }
+    const token = sessionStorage.getItem('adminToken');
+    const payload = { device_id: device, username, level, expiry, status };
+    try {
+      let res;
+      if (!editMode) {
+        // Add license
+        res = await fetch(`${API_BASE}/admin/licenses?token=${encodeURIComponent(token)}`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+      } else {
+        // Edit license
+        res = await fetch(`${API_BASE}/admin/licenses?token=${encodeURIComponent(token)}&device_id=${encodeURIComponent(device)}`, {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+      }
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Server error');
+      }
+      document.getElementById('license-form').style.display = 'none';
+      loadLicenses();
+    } catch (err) {
+      errorDiv.innerText = err.message; errorDiv.style.display = 'block';
+    }
+  });
+
+  function createLicenseRow(lic) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${lic.device_id}</td>
+      <td>${lic.username}</td>
+      <td>${lic.level}</td>
+      <td>${lic.expiry}</td>
+      <td>${lic.status}</td>
+      <td>
+        <button class="btn-small edit-btn" data-id="${lic.device_id}">Edit</button>
+        <button class="btn-small delete-btn" data-id="${lic.device_id}">Delete</button>
+      </td>
+    `;
+    // Edit
+    tr.querySelector('.edit-btn').addEventListener('click', () => {
+      editMode = true;
+      document.getElementById('license-form-title').innerText = 'Edit License';
+      document.getElementById('license-form').style.display = 'block';
+      document.getElementById('device_id').value = lic.device_id;
+      document.getElementById('device_id').disabled = true;
+      document.getElementById('username').value = lic.username;
+      document.getElementById('level').value = lic.level;
+      document.getElementById('expiry').value = lic.expiry;
+      document.getElementById('status').value = lic.status;
+      document.getElementById('license-form-error').style.display = 'none';
+    });
+    // Delete
+    tr.querySelector('.delete-btn').addEventListener('click', async () => {
+      if (!confirm('Delete license for device ' + lic.device_id + '?')) return;
+      try {
+        const token = sessionStorage.getItem('adminToken');
+        const res = await fetch(`${API_BASE}/admin/licenses?token=${encodeURIComponent(token)}&device_id=${encodeURIComponent(lic.device_id)}`, {method: 'DELETE'});
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Delete failed');
+        }
+        loadLicenses();
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    });
+    return tr;
+  }
+
+  // Load licenses (optionally filtered)
+  async function loadLicenses(deviceId) {
+    const token = sessionStorage.getItem('adminToken');
+    const loadingDiv = document.getElementById('licenses-loading');
+    const errorDiv = document.getElementById('licenses-error');
+    const tbody = document.getElementById('licenses-table').querySelector('tbody');
+    loadingDiv.style.display = 'block'; errorDiv.style.display = 'none';
+    tbody.innerHTML = '';
+    try {
+      let url = `${API_BASE}/admin/licenses?token=${encodeURIComponent(token)}`;
+      if (deviceId) {
+        url += `&device_id=${encodeURIComponent(deviceId)}&limit=1`;
+      }
+      const res = await fetch(url);
+      if (!res.ok) {
+        if (res.status === 401) throw new Error('Unauthorized (invalid token)');
+        else throw new Error('Server error ' + res.status);
+      }
+      const data = await res.json();
+      data.forEach(lic => {
+        tbody.appendChild(createLicenseRow(lic));
+      });
+    } catch (err) {
+      errorDiv.innerText = err.message; errorDiv.style.display = 'block';
+    } finally {
+      loadingDiv.style.display = 'none';
+      document.getElementById('device_id').disabled = false;
+    }
+  }
+
+  // Sessions section
+  document.getElementById('sessions-filter-form').addEventListener('submit', e => {
+    e.preventDefault();
+    loadSessions(document.getElementById('session-device').value.trim());
+  });
+  document.getElementById('clear-sessions-filter').addEventListener('click', () => {
+    document.getElementById('session-device').value = '';
+    loadSessions();
+  });
+  async function loadSessions(deviceId) {
+    const token = sessionStorage.getItem('adminToken');
+    const loadingDiv = document.getElementById('sessions-loading');
+    const errorDiv = document.getElementById('sessions-error');
+    const tbody = document.getElementById('sessions-table').querySelector('tbody');
+    loadingDiv.style.display = 'block'; errorDiv.style.display = 'none';
+    tbody.innerHTML = '';
+    try {
+      let url = `${API_BASE}/admin/sessions?token=${encodeURIComponent(token)}`;
+      if (deviceId) url += `&device_id=${encodeURIComponent(deviceId)}`;
+      const res = await fetch(url);
+      if (!res.ok) {
+        if (res.status === 401) throw new Error('Unauthorized');
+        else throw new Error('Server error ' + res.status);
+      }
+      const data = await res.json();
+      data.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${s.session_id}</td>
+          <td>${s.device_id}</td>
+          <td>${s.level}</td>
+          <td>${s.start_time || ''}</td>
+          <td>${s.end_time || ''}</td>
+          <td>${s.status}</td>
+          <td>${s.duration_sec != null ? s.duration_sec : ''}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (err) {
+      errorDiv.innerText = err.message; errorDiv.style.display = 'block';
+    } finally {
+      loadingDiv.style.display = 'none';
+    }
+  }
+
+  // Events section
+  document.getElementById('events-filter-form').addEventListener('submit', e => {
+    e.preventDefault();
+    loadEvents(document.getElementById('events-device').value.trim(), document.getElementById('events-date').value);
+  });
+  document.getElementById('clear-events-filter').addEventListener('click', () => {
+    document.getElementById('events-device').value = '';
+    document.getElementById('events-date').value = '';
+    loadEvents();
+  });
+  async function loadEvents(deviceId, date) {
+    const token = sessionStorage.getItem('adminToken');
+    const loadingDiv = document.getElementById('events-loading');
+    const errorDiv = document.getElementById('events-error');
+    const tbody = document.getElementById('events-table').querySelector('tbody');
+    loadingDiv.style.display = 'block'; errorDiv.style.display = 'none';
+    tbody.innerHTML = '';
+    try {
+      let url = `${API_BASE}/admin/events?token=${encodeURIComponent(token)}`;
+      if (deviceId) url += `&device_id=${encodeURIComponent(deviceId)}`;
+      if (date) url += `&date=${encodeURIComponent(date)}`;
+      const res = await fetch(url);
+      if (!res.ok) {
+        if (res.status === 401) throw new Error('Unauthorized');
+        else throw new Error('Server error ' + res.status);
+      }
+      const data = await res.json();
+      data.forEach(ev => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${ev.id}</td>
+          <td>${ev.device_id}</td>
+          <td>${ev.event}</td>
+          <td>${ev.result}</td>
+          <td>${ev.created_at}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (err) {
+      errorDiv.innerText = err.message; errorDiv.style.display = 'block';
+    } finally {
+      loadingDiv.style.display = 'none';
+    }
+  }
+
+  // Unauthorized section
+  async function loadUnauthorized() {
+    const token = sessionStorage.getItem('adminToken');
+    const loadingDiv = document.getElementById('unauth-loading');
+    const errorDiv = document.getElementById('unauth-error');
+    const tbody = document.getElementById('unauth-table').querySelector('tbody');
+    loadingDiv.style.display = 'block'; errorDiv.style.display = 'none';
+    tbody.innerHTML = '';
+    try {
+      const res = await fetch(`${API_BASE}/admin/unauthorised?token=${encodeURIComponent(token)}`);
+      if (!res.ok) {
+        if (res.status === 401) throw new Error('Unauthorized');
+        else throw new Error('Server error ' + res.status);
+      }
+      const data = await res.json();
+      data.forEach(ev => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${ev.device_id}</td>
+          <td>${ev.event}</td>
+          <td>${ev.result}</td>
+          <td>${ev.created_at}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (err) {
+      errorDiv.innerText = err.message; errorDiv.style.display = 'block';
+    } finally {
+      loadingDiv.style.display = 'none';
+    }
+  }
+
+  // Stats section
+  async function loadStats() {
+    const token = sessionStorage.getItem('adminToken');
+    const loadingDiv = document.getElementById('stats-loading');
+    const errorDiv = document.getElementById('stats-error');
+    const contentDiv = document.getElementById('stats-content');
+    loadingDiv.style.display = 'block'; errorDiv.style.display = 'none';
+    contentDiv.style.display = 'none';
+    try {
+      const res = await fetch(`${API_BASE}/admin/stats?token=${encodeURIComponent(token)}`);
+      if (!res.ok) {
+        if (res.status === 401) throw new Error('Unauthorized');
+        else throw new Error('Server error ' + res.status);
+      }
+      const stats = await res.json();
+      document.getElementById('stat-total').innerText = stats.total || 0;
+      document.getElementById('stat-active').innerText = stats.active || 0;
+      document.getElementById('stat-expired').innerText = stats.expired || 0;
+      document.getElementById('stat-lite').innerText = stats.lite || 0;
+      document.getElementById('stat-premium').innerText = stats.premium || 0;
+      contentDiv.style.display = 'block';
+    } catch (err) {
+      errorDiv.innerText = err.message; errorDiv.style.display = 'block';
+    } finally {
+      loadingDiv.style.display = 'none';
+    }
+  }
+
+  // Export handlers
+  document.getElementById('export-licenses-csv').addEventListener('click', () => {
+    exportTableToCSV('licenses-table', 'licenses.csv');
+  });
+  document.getElementById('export-licenses-json').addEventListener('click', () => {
+    const rows = [];
+    document.querySelectorAll('#licenses-table tbody tr').forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      rows.push({
+        device_id: cells[0].innerText,
+        username: cells[1].innerText,
+        level: cells[2].innerText,
+        expiry: cells[3].innerText,
+        status: cells[4].innerText
+      });
+    });
+    exportDataToJSON(rows, 'licenses.json');
+  });
+  document.getElementById('export-sessions-csv').addEventListener('click', () => {
+    exportTableToCSV('sessions-table', 'sessions.csv');
+  });
+  document.getElementById('export-sessions-json').addEventListener('click', () => {
+    const rows = [];
+    document.querySelectorAll('#sessions-table tbody tr').forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      rows.push({
+        session_id: cells[0].innerText,
+        device_id: cells[1].innerText,
+        level: cells[2].innerText,
+        start_time: cells[3].innerText,
+        end_time: cells[4].innerText,
+        status: cells[5].innerText,
+        duration_sec: cells[6].innerText
+      });
+    });
+    exportDataToJSON(rows, 'sessions.json');
+  });
+  document.getElementById('export-events-csv').addEventListener('click', () => {
+    exportTableToCSV('events-table', 'events.csv');
+  });
+  document.getElementById('export-events-json').addEventListener('click', () => {
+    const rows = [];
+    document.querySelectorAll('#events-table tbody tr').forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      rows.push({
+        id: cells[0].innerText,
+        device_id: cells[1].innerText,
+        event: cells[2].innerText,
+        result: cells[3].innerText,
+        created_at: cells[4].innerText
+      });
+    });
+    exportDataToJSON(rows, 'events.json');
+  });
+  document.getElementById('export-unauth-csv').addEventListener('click', () => {
+    exportTableToCSV('unauth-table', 'unauthorised.csv');
+  });
+  document.getElementById('export-unauth-json').addEventListener('click', () => {
+    const rows = [];
+    document.querySelectorAll('#unauth-table tbody tr').forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      rows.push({
+        device_id: cells[0].innerText,
+        event: cells[1].innerText,
+        result: cells[2].innerText,
+        created_at: cells[3].innerText
+      });
+    });
+    exportDataToJSON(rows, 'unauthorised.json');
+  });
+
+  // Initialize
+  let editMode = false;
+  if (sessionStorage.getItem('adminToken')) {
+    showLogin(false);
+    document.getElementById('main-nav').style.display = 'flex';
+    loadLicenses();
+    loadStats();
+  } else {
+    showLogin(true);
+  }
+  ['licenses','sessions','events','unauthorised'].forEach(sec => {
+    document.querySelector('button[data-section="'+sec+'"]').addEventListener('click', () => {
+      if (sec === 'licenses') loadLicenses();
+      if (sec === 'sessions') loadSessions();
+      if (sec === 'events') loadEvents();
+      if (sec === 'unauthorised') loadUnauthorized();
+    });
+  });
+
+})();
+</script>
+
 </body>
 </html>
