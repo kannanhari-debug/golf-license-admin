@@ -8,24 +8,20 @@
     :root{
       --bg:#0b1020;
       --panel:#0f1733;
-      --panel2:#0c132b;
       --text:#e9edff;
       --muted:#a9b2e5;
-      --line: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.10);
       --brand:#7c5cff;
       --brand2:#42e8ff;
       --good:#2ee59d;
       --warn:#ffcc66;
       --bad:#ff5c7a;
-      --btn:#18224a;
-      --btn2:#1f2b5e;
-      --shadow: 0 12px 28px rgba(0,0,0,.35);
-      --radius:16px;
+      --shadow: 0 10px 26px rgba(0,0,0,.35);
+      --radius:18px;
       --radius2:22px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
-
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
@@ -33,21 +29,19 @@
       font-family:var(--sans);
       color:var(--text);
       background:
-        radial-gradient(1200px 800px at 20% 0%, rgba(124,92,255,.35), transparent 60%),
-        radial-gradient(1000px 700px at 90% 20%, rgba(66,232,255,.22), transparent 55%),
-        radial-gradient(900px 600px at 40% 100%, rgba(46,229,157,.14), transparent 55%),
+        radial-gradient(900px 600px at 20% 0%, rgba(124,92,255,.22), transparent 60%),
+        radial-gradient(900px 600px at 90% 20%, rgba(66,232,255,.16), transparent 60%),
+        radial-gradient(900px 600px at 40% 100%, rgba(46,229,157,.10), transparent 60%),
         var(--bg);
     }
-
-    a{color:inherit}
 
     .wrap{
       max-width:1200px;
       margin:0 auto;
-      padding:18px 14px 36px;
+      padding:16px 12px 32px;
     }
 
-    /* Top bar */
+    /* ✅ NO STICKY, NO BACKDROP FILTER (fix blue scroll overlay) */
     .topbar{
       display:flex;
       align-items:center;
@@ -55,14 +49,11 @@
       gap:12px;
       padding:14px 16px;
       border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      background: linear-gradient(180deg, rgba(20,28,60,.92), rgba(14,20,46,.92));
       border-radius:var(--radius2);
       box-shadow:var(--shadow);
-      position:sticky;
-      top:10px;
-      z-index:5;
-      backdrop-filter: blur(10px);
     }
+
     .brand{
       display:flex;
       align-items:center;
@@ -72,11 +63,10 @@
     .logo{
       width:38px;height:38px;border-radius:12px;
       background:linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow:0 10px 24px rgba(124,92,255,.35);
+      box-shadow:0 10px 24px rgba(124,92,255,.25);
       display:grid;place-items:center;
       flex:0 0 auto;
     }
-    .logo svg{filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
     .brand h1{
       font-size:16px;
       margin:0;
@@ -106,35 +96,35 @@
       padding:8px 10px;
       border:1px solid var(--line);
       border-radius:999px;
-      background:rgba(255,255,255,.04);
+      background: rgba(255,255,255,.04);
       color:var(--muted);
       font-size:12px;
     }
-    .pill strong{color:var(--text); font-weight:650}
+    .pill strong{color:var(--text); font-weight:750}
+
     .btn{
       appearance:none;border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      background: rgba(255,255,255,.05);
       color:var(--text);
       padding:9px 12px;
       border-radius:12px;
       cursor:pointer;
       transition:transform .08s ease, background .12s ease, border-color .12s ease;
-      font-weight:600;
+      font-weight:700;
       font-size:13px;
     }
-    .btn:hover{background:rgba(255,255,255,.07)}
+    .btn:hover{background:rgba(255,255,255,.08)}
     .btn:active{transform:translateY(1px)}
     .btn.primary{
       border-color: rgba(124,92,255,.45);
-      background:linear-gradient(135deg, rgba(124,92,255,.35), rgba(66,232,255,.16));
-      box-shadow:0 10px 22px rgba(124,92,255,.18);
+      background:linear-gradient(135deg, rgba(124,92,255,.26), rgba(66,232,255,.12));
+      box-shadow:0 10px 22px rgba(124,92,255,.14);
     }
     .btn.danger{
       border-color: rgba(255,92,122,.45);
-      background:linear-gradient(135deg, rgba(255,92,122,.22), rgba(255,255,255,.03));
+      background:linear-gradient(135deg, rgba(255,92,122,.18), rgba(255,255,255,.04));
     }
 
-    /* Layout */
     .grid{
       display:grid;
       grid-template-columns: 260px 1fr;
@@ -143,17 +133,14 @@
       align-items:start;
     }
 
+    /* ✅ sidebar NOT sticky */
     .sidebar{
       border:1px solid var(--line);
       border-radius:var(--radius2);
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      background: rgba(18,25,55,.75);
       box-shadow:var(--shadow);
       padding:10px;
-      position:sticky;
-      top:86px;
-      backdrop-filter: blur(10px);
     }
-
     .navbtn{
       width:100%;
       display:flex;
@@ -166,17 +153,15 @@
       border-radius:14px;
       cursor:pointer;
       text-align:left;
-      font-weight:700;
+      font-weight:800;
       transition:background .12s ease, color .12s ease, border-color .12s ease;
     }
-    .navbtn svg{opacity:.9}
     .navbtn.active{
       color:var(--text);
       border-color: rgba(124,92,255,.30);
-      background:linear-gradient(135deg, rgba(124,92,255,.20), rgba(66,232,255,.10));
+      background:linear-gradient(135deg, rgba(124,92,255,.18), rgba(66,232,255,.10));
     }
     .navbtn:hover{background:rgba(255,255,255,.04); color:var(--text)}
-    .navspacer{height:8px}
     .sidehint{
       margin-top:10px;
       padding:10px 12px;
@@ -190,7 +175,7 @@
     .panel{
       border:1px solid var(--line);
       border-radius:var(--radius2);
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      background: rgba(18,25,55,.75);
       box-shadow:var(--shadow);
       overflow:hidden;
     }
@@ -201,7 +186,7 @@
       gap:12px;
       padding:14px 16px;
       border-bottom:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      background: rgba(255,255,255,.03);
     }
     .panel-hd h2{
       margin:0;
@@ -216,7 +201,6 @@
     }
     .panel-bd{padding:14px 16px;}
 
-    /* Cards */
     .cards{
       display:grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -226,21 +210,11 @@
       border:1px solid var(--line);
       border-radius:16px;
       padding:12px;
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      background: rgba(255,255,255,.03);
       min-height:84px;
-      position:relative;
-      overflow:hidden;
     }
-    .card:before{
-      content:"";
-      position:absolute; inset:-80px -80px auto auto;
-      width:140px;height:140px;
-      background: radial-gradient(circle at 30% 30%, rgba(124,92,255,.35), transparent 60%);
-      filter: blur(0px);
-      transform: rotate(15deg);
-    }
-    .card .k{color:var(--muted); font-size:12px; font-weight:650}
-    .card .v{font-size:22px; font-weight:850; margin-top:4px}
+    .card .k{color:var(--muted); font-size:12px; font-weight:750}
+    .card .v{font-size:22px; font-weight:900; margin-top:4px}
     .card .badge{
       display:inline-flex; align-items:center; gap:6px;
       padding:6px 10px;
@@ -252,7 +226,6 @@
       margin-top:8px;
     }
 
-    /* Toolbars & inputs */
     .toolbar{
       display:flex;
       flex-wrap:wrap;
@@ -285,12 +258,11 @@
     .input input::placeholder{color:rgba(169,178,229,.6)}
     select option{color:#111}
 
-    /* Tables */
     .table-wrap{
       border:1px solid var(--line);
       border-radius:16px;
       overflow:hidden;
-      background:rgba(10,15,28,.35);
+      background: rgba(0,0,0,.15);
     }
     table{
       width:100%;
@@ -300,14 +272,13 @@
     }
     thead th{
       text-align:left;
-      color:rgba(233,237,255,.85);
-      font-weight:800;
+      color:rgba(233,237,255,.9);
+      font-weight:900;
       background:rgba(255,255,255,.04);
       border-bottom:1px solid var(--line);
       padding:11px 12px;
-      position:sticky;
-      top:0;
-      z-index:1;
+      /* ✅ no sticky headers */
+      position:static;
     }
     tbody td{
       padding:10px 12px;
@@ -324,7 +295,7 @@
       border:1px solid var(--line);
       background:rgba(255,255,255,.03);
       color:var(--muted);
-      font-weight:700;
+      font-weight:800;
       font-size:12px;
       white-space:nowrap;
     }
@@ -338,14 +309,13 @@
       background:rgba(255,255,255,.03);
       color:var(--text);
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
       font-size:12px;
       margin-right:6px;
     }
     .rowbtn:hover{background:rgba(255,255,255,.06)}
     .rowbtn.danger{border-color: rgba(255,92,122,.35);}
 
-    /* Alerts */
     .alert{
       display:none;
       margin:10px 0 0;
@@ -376,7 +346,7 @@
     /* Modal */
     .modal{
       position:fixed; inset:0;
-      background:rgba(0,0,0,.55);
+      background:rgba(0,0,0,.58);
       display:none;
       align-items:center;
       justify-content:center;
@@ -388,7 +358,7 @@
       width:min(720px, 100%);
       border-radius:22px;
       border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(15,23,51,.98), rgba(10,14,30,.98));
+      background: rgba(18,25,55,.95);
       box-shadow: 0 18px 50px rgba(0,0,0,.55);
       overflow:hidden;
     }
@@ -415,7 +385,7 @@
       display:block;
       font-size:12px;
       color:var(--muted);
-      font-weight:750;
+      font-weight:850;
       margin-bottom:6px;
     }
     .field input, .field select{
@@ -438,10 +408,10 @@
     /* Login */
     .login{
       max-width:520px;
-      margin:30px auto 0;
+      margin:22px auto 0;
       border:1px solid var(--line);
       border-radius:22px;
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      background: rgba(18,25,55,.75);
       box-shadow:var(--shadow);
       overflow:hidden;
     }
@@ -458,7 +428,6 @@
       grid-template-columns: 1fr 1fr;
       gap:10px;
     }
-    .login .row .field{background:rgba(0,0,0,.10)}
     .login .actions{
       display:flex; gap:10px; justify-content:space-between; align-items:center; flex-wrap:wrap;
       margin-top:10px;
@@ -469,10 +438,8 @@
       line-height:1.35;
     }
 
-    /* Responsive */
     @media (max-width: 920px){
       .grid{grid-template-columns: 1fr}
-      .sidebar{position:relative; top:auto}
       .cards{grid-template-columns: repeat(2, minmax(0, 1fr));}
     }
     @media (max-width: 520px){
@@ -482,17 +449,12 @@
       .input{min-width: 100%}
       thead{display:none}
       table, tbody, tr, td{display:block; width:100%}
-      tbody td{
-        border-bottom:1px solid rgba(255,255,255,.08);
-      }
-      tbody tr{
-        border-bottom:1px solid rgba(255,255,255,.10);
-      }
+      tbody td{border-bottom:1px solid rgba(255,255,255,.08);}
       tbody td::before{
         content: attr(data-label);
         display:block;
         color:var(--muted);
-        font-weight:800;
+        font-weight:900;
         margin-bottom:4px;
         font-size:12px;
       }
@@ -543,7 +505,7 @@
         <div class="actions">
           <button class="btn primary" id="loginBtn">Login</button>
           <div class="small">
-            Tip: token is stored in <b>sessionStorage</b> (clears when you close browser).<br/>
+            Token is stored in <b>sessionStorage</b> (clears when you close browser).<br/>
             If token is wrong, backend returns 401.
           </div>
         </div>
@@ -554,31 +516,15 @@
     <!-- App -->
     <div class="grid" id="appGrid" style="display:none;">
       <div class="sidebar">
-        <button class="navbtn active" data-view="dash">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 13h7V4H4v9Zm9 7h7V11h-7v9ZM4 20h7v-5H4v5Zm9-11h7V4h-7v5Z" stroke="rgba(233,237,255,.92)" stroke-width="2" stroke-linejoin="round"/></svg>
-          Dashboard
-        </button>
-        <button class="navbtn" data-view="licenses">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 7h10M7 12h10M7 17h6" stroke="rgba(233,237,255,.92)" stroke-width="2" stroke-linecap="round"/><path d="M5 3h14a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V5a2 2 0 0 1 2-2Z" stroke="rgba(233,237,255,.92)" stroke-width="2" stroke-linejoin="round"/></svg>
-          Licenses
-        </button>
-        <button class="navbtn" data-view="sessions">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 8v5l3 2" stroke="rgba(233,237,255,.92)" stroke-width="2" stroke-linecap="round"/><path d="M21 12a9 9 0 1 1-3.1-6.7" stroke="rgba(233,237,255,.92)" stroke-width="2" stroke-linecap="round"/></svg>
-          Sessions
-        </button>
-        <button class="navbtn" data-view="events">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 7h8M8 11h8M8 15h6" stroke="rgba(233,237,255,.92)" stroke-width="2" stroke-linecap="round"/><path d="M6 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="rgba(233,237,255,.92)" stroke-width="2" stroke-linejoin="round"/></svg>
-          Events
-        </button>
-        <button class="navbtn" data-view="unauth">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 9v4" stroke="rgba(233,237,255,.92)" stroke-width="2" stroke-linecap="round"/><path d="M12 17h.01" stroke="rgba(233,237,255,.92)" stroke-width="3" stroke-linecap="round"/><path d="M10.3 4.3 3.6 18a2 2 0 0 0 1.8 3h13.2a2 2 0 0 0 1.8-3L13.7 4.3a2 2 0 0 0-3.4 0Z" stroke="rgba(233,237,255,.92)" stroke-width="2" stroke-linejoin="round"/></svg>
-          Unauthorized
-        </button>
+        <button class="navbtn active" data-view="dash">Dashboard</button>
+        <button class="navbtn" data-view="licenses">Licenses</button>
+        <button class="navbtn" data-view="sessions">Sessions</button>
+        <button class="navbtn" data-view="events">Events</button>
+        <button class="navbtn" data-view="unauth">Unauthorized</button>
 
-        <div class="navspacer"></div>
         <div class="sidehint">
-          ⚡ Faster loading: by default we load fewer rows and cache results for 30s.<br/>
-          Use filters to drill down per device/date.
+          ⚡ Faster loading: defaults are small limits + 30s cache.<br/>
+          Use filters for quickest results.
         </div>
       </div>
 
@@ -606,12 +552,12 @@
             <div class="left">
               <div class="input" style="min-width:320px;">
                 <span style="opacity:.8">🔎</span>
-                <input id="quickDevice" placeholder="Quick lookup: enter device_id (license + recent logs)" />
+                <input id="quickDevice" placeholder="Quick lookup: device_id (license + recent logs)" />
               </div>
               <button class="btn primary" id="quickLookupBtn">Lookup</button>
             </div>
             <div class="right">
-              <span class="pill">Cache: <strong>30s</strong></span>
+              <span class="pill">Cache <strong>30s</strong></span>
             </div>
           </div>
 
@@ -619,16 +565,13 @@
             <div class="panel-hd">
               <h2>Recent activity</h2>
               <div class="right">
-                <span class="pill">Fast view (small limits)</span>
+                <button class="btn" id="dashRefreshMini">Refresh mini</button>
               </div>
             </div>
             <div class="panel-bd">
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                 <div>
-                  <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;">
-                    <div style="font-weight:850; color:rgba(233,237,255,.92)">Unauthorized / Expired attempts (latest)</div>
-                    <button class="btn" id="dashRefreshMini">Refresh</button>
-                  </div>
+                  <div style="font-weight:900; margin-bottom:8px;">Unauthorized / Expired checks</div>
                   <div class="table-wrap">
                     <table id="dashUnauthTable">
                       <thead><tr><th>device_id</th><th>result</th><th>time</th></tr></thead>
@@ -638,10 +581,7 @@
                 </div>
 
                 <div>
-                  <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;">
-                    <div style="font-weight:850; color:rgba(233,237,255,.92)">Recent sessions (latest)</div>
-                    <span class="pill">duration auto</span>
-                  </div>
+                  <div style="font-weight:900; margin-bottom:8px;">Recent sessions</div>
                   <div class="table-wrap">
                     <table id="dashSessionsTable">
                       <thead><tr><th>device_id</th><th>status</th><th>duration</th><th>start</th></tr></thead>
@@ -652,7 +592,7 @@
               </div>
 
               <div style="margin-top:12px;">
-                <div style="font-weight:850; color:rgba(233,237,255,.92); margin-bottom:8px;">Recent events (latest)</div>
+                <div style="font-weight:900; margin-bottom:8px;">Recent events</div>
                 <div class="table-wrap">
                   <table id="dashEventsTable">
                     <thead><tr><th>device_id</th><th>event</th><th>result</th><th>time</th></tr></thead>
@@ -699,7 +639,7 @@
               <button class="btn" id="licClearBtn">Clear</button>
             </div>
             <div class="right">
-              <span class="pill">Tip: Use filter for fastest</span>
+              <span class="pill">Status is auto-active until expiry</span>
             </div>
           </div>
 
@@ -856,7 +796,7 @@
     </div>
   </div>
 
-  <!-- License Modal -->
+  <!-- License Modal (✅ status removed, expiry can't be past) -->
   <div class="modal" id="licModal">
     <div class="modal-card">
       <div class="modal-hd">
@@ -875,16 +815,12 @@
             </select>
           </div>
           <div class="field"><label>expiry</label><input id="mExpiry" type="date" /></div>
-          <div class="field"><label>status</label>
-            <select id="mStatus">
-              <option value="">Select</option>
-              <option value="active">active</option>
-              <option value="inactive">inactive</option>
-            </select>
-          </div>
         </div>
         <div class="alert err" id="modalErr"></div>
         <div class="alert ok" id="modalOk"></div>
+        <div class="small" style="margin-top:8px;">
+          Status is automatically set to <b>active</b> and will expire by date.
+        </div>
       </div>
       <div class="modal-ft">
         <button class="btn primary" id="modalSave">Save</button>
@@ -895,47 +831,48 @@
 
 <script>
 (() => {
-  // ✅ EDIT THIS LINE ONLY:
+  // ✅ Your Railway backend already set:
   const API_BASE = "https://golf-licenses-production.up.railway.app";
 
-  const CACHE_MS = 30000; // 30 seconds cache for fast tab switching
-  const DEFAULT_TIMEOUT = 12000; // 12s request timeout
+  const CACHE_MS = 30000;
+  const DEFAULT_TIMEOUT = 12000;
 
   const $ = (id) => document.getElementById(id);
 
   const state = {
     token: null,
-    cache: new Map(), // key -> {t, data}
-    last: {
-      licenses: [],
-      sessions: [],
-      events: [],
-      unauth: [],
-      stats: null,
-      dashboard: null
-    },
-    modalMode: "create", // create | edit
+    cache: new Map(),
+    last: { licenses: [], sessions: [], events: [], unauth: [], stats: null, dashboard: null },
+    modalMode: "create",
     modalDevice: null
   };
 
-  function setBackendLine(text){
-    $("svcLine").textContent = text;
+  function todayISO(){
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    return `${yyyy}-${mm}-${dd}`;
   }
+
+  // expiry min today
+  function applyMinDate(){
+    const t = todayISO();
+    $("mExpiry").setAttribute("min", t);
+  }
+
+  function setBackendLine(text){ $("svcLine").textContent = text; }
 
   function showAlert(el, msg, kind="err"){
     el.textContent = msg || "";
     el.classList.remove("show","err","ok","loading");
     if(!msg) return;
-    el.classList.add("show");
-    el.classList.add(kind);
+    el.classList.add("show", kind);
   }
 
   function fmtDateTime(s){
     if(!s) return "";
-    try {
-      const d = new Date(s);
-      return d.toLocaleString();
-    } catch { return String(s); }
+    try { return new Date(s).toLocaleString(); } catch { return String(s); }
   }
 
   function fmtDuration(sec){
@@ -943,11 +880,9 @@
     const n = Number(sec);
     if(!Number.isFinite(n)) return String(sec);
     if(n < 60) return `${n}s`;
-    const m = Math.floor(n/60);
-    const r = n % 60;
+    const m = Math.floor(n/60), r = n % 60;
     if(m < 60) return `${m}m ${r}s`;
-    const h = Math.floor(m/60);
-    const mm = m % 60;
+    const h = Math.floor(m/60), mm = m % 60;
     return `${h}h ${mm}m`;
   }
 
@@ -989,9 +924,7 @@
         throw e;
       }
       return await res.json();
-    } finally {
-      clearTimeout(t);
-    }
+    } finally { clearTimeout(t); }
   }
 
   function cacheKey(name, params){ return name + "::" + JSON.stringify(params||{}); }
@@ -1014,7 +947,6 @@
     return u.toString();
   }
 
-  // Views
   const views = ["dash","licenses","sessions","events","unauth"];
   function showView(v){
     for(const name of views){
@@ -1027,7 +959,6 @@
     });
   }
 
-  // Login / logout
   async function pingBackend(){
     try{
       const j = await fetchJSON(API_BASE + "/");
@@ -1042,7 +973,6 @@
   }
 
   async function validateToken(token){
-    // fastest token validation (stats endpoint)
     await fetchJSON(API_BASE + "/admin/stats?token=" + encodeURIComponent(token));
   }
 
@@ -1070,7 +1000,6 @@
     const tok = $("tok").value.trim();
     if(!pw){ showAlert($("loginErr"), "Password is required (local only)."); return; }
     if(!tok){ showAlert($("loginErr"), "Admin Token is required."); return; }
-
     try{
       $("loginBtn").textContent = "Logging in…";
       await pingBackend();
@@ -1081,8 +1010,7 @@
       showView("dash");
       await loadDashboard(true);
     }catch(e){
-      if(e.status === 401) showAlert($("loginErr"), "Invalid token (backend returned 401).");
-      else showAlert($("loginErr"), "Login failed: " + (e.message || "unknown error"));
+      showAlert($("loginErr"), e.status === 401 ? "Invalid token (401)." : ("Login failed: " + (e.message||"unknown")));
     }finally{
       $("loginBtn").textContent = "Login";
     }
@@ -1093,13 +1021,10 @@
     await loadDashboard(true);
   });
 
-  // Sidebar navigation
   document.querySelectorAll(".navbtn").forEach(btn => {
     btn.addEventListener("click", async () => {
       const v = btn.dataset.view;
       showView(v);
-
-      // load for that tab (cached so fast)
       if(v === "dash") await loadDashboard(false);
       if(v === "licenses") await loadLicenses();
       if(v === "sessions") await loadSessions();
@@ -1109,11 +1034,10 @@
   });
 
   // Dashboard
-  async function loadDashboard(force){
+  async function loadDashboard(){
     showAlert($("dashErr"), "");
     $("dashLoading").classList.add("show");
     $("statCards").style.display = "none";
-
     try{
       const statsP = cached("stats", {}, () => fetchJSON(authedUrl("/admin/stats")));
       const unauthP = cached("unauth-mini", {limit: 10}, () => fetchJSON(authedUrl("/admin/unauthorised", {limit: 10})));
@@ -1139,96 +1063,85 @@
       $("dashLoading").classList.remove("show");
     }catch(e){
       $("dashLoading").classList.remove("show");
-      if(e.status === 401){
-        showAlert($("dashErr"), "Unauthorized (token invalid). Logging out…", "err");
-        setTimeout(logout, 800);
-        return;
-      }
-      showAlert($("dashErr"), "Failed to load dashboard: " + (e.message || "unknown error"), "err");
+      if(e.status === 401){ showAlert($("dashErr"), "Unauthorized. Logging out…"); setTimeout(logout, 800); return; }
+      showAlert($("dashErr"), "Failed to load dashboard: " + (e.message||"unknown"));
     }
   }
 
   function fillDashUnauth(rows){
     const tb = $("dashUnauthTable").querySelector("tbody");
     tb.innerHTML = "";
-    for(const r of rows || []){
+    (rows||[]).forEach(r => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono">${escapeHtml(r.device_id || "")}</td>
-        <td>${tagResult(r.result)}</td>
-        <td>${escapeHtml(fmtDateTime(r.created_at))}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
+        <td data-label="result">${tagResult(r.result)}</td>
+        <td data-label="time">${escapeHtml(fmtDateTime(r.created_at))}</td>
       `;
       tb.appendChild(tr);
-    }
+    });
   }
   function fillDashSessions(rows){
     const tb = $("dashSessionsTable").querySelector("tbody");
     tb.innerHTML = "";
-    for(const r of rows || []){
+    (rows||[]).forEach(r => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono">${escapeHtml(r.device_id || "")}</td>
-        <td>${tagSessionStatus(r.status)}</td>
-        <td>${escapeHtml(fmtDuration(r.duration_sec))}</td>
-        <td>${escapeHtml(fmtDateTime(r.start_time))}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
+        <td data-label="status">${tagSessionStatus(r.status)}</td>
+        <td data-label="duration">${escapeHtml(fmtDuration(r.duration_sec))}</td>
+        <td data-label="start">${escapeHtml(fmtDateTime(r.start_time))}</td>
       `;
       tb.appendChild(tr);
-    }
+    });
   }
   function fillDashEvents(rows){
     const tb = $("dashEventsTable").querySelector("tbody");
     tb.innerHTML = "";
-    for(const r of rows || []){
+    (rows||[]).forEach(r => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono">${escapeHtml(r.device_id || "")}</td>
-        <td>${escapeHtml(r.event || "")}</td>
-        <td>${tagResult(r.result)}</td>
-        <td>${escapeHtml(fmtDateTime(r.created_at))}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
+        <td data-label="event">${escapeHtml(r.event||"")}</td>
+        <td data-label="result">${tagResult(r.result)}</td>
+        <td data-label="time">${escapeHtml(fmtDateTime(r.created_at))}</td>
       `;
       tb.appendChild(tr);
-    }
+    });
   }
 
   $("dashRefreshMini").addEventListener("click", async () => {
-    // clear only mini caches
     [...state.cache.keys()].forEach(k => {
       if(k.startsWith("unauth-mini") || k.startsWith("ses-mini") || k.startsWith("evt-mini")) state.cache.delete(k);
     });
-    await loadDashboard(true);
+    await loadDashboard();
   });
 
   $("dashExportJson").addEventListener("click", () => {
-    const payload = state.last.dashboard || {};
-    download(JSON.stringify(payload, null, 2), "dashboard.json", "application/json");
+    download(JSON.stringify(state.last.dashboard || {}, null, 2), "dashboard.json", "application/json");
   });
 
   $("quickLookupBtn").addEventListener("click", async () => {
     showAlert($("quickErr"), "");
     showAlert($("quickOk"), "");
     const device = $("quickDevice").value.trim();
-    if(!device){ showAlert($("quickErr"), "Enter a device_id first.", "err"); return; }
-
+    if(!device){ showAlert($("quickErr"), "Enter a device_id first."); return; }
     try{
-      // Pull license (via /admin/licenses?device_id=... limit=1) and recent logs filtered
       const licP = fetchJSON(authedUrl("/admin/licenses", {device_id: device, limit: 1}));
       const evtP = fetchJSON(authedUrl("/admin/events", {device_id: device, limit: 30}));
       const sesP = fetchJSON(authedUrl("/admin/sessions", {device_id: device, limit: 30}));
       const [lic, evts, sess] = await Promise.all([licP, evtP, sesP]);
-
       const licRow = (lic && lic[0]) ? lic[0] : null;
-      const msg = licRow
-        ? `Found license: ${licRow.username} • ${licRow.level} • expiry ${licRow.expiry} • ${licRow.status}`
-        : `No license found for ${device}`;
-
-      showAlert($("quickOk"), msg, "ok");
-
-      // overwrite dashboard tables with filtered info
+      showAlert($("quickOk"),
+        licRow
+          ? `Found: ${licRow.username} • ${licRow.level} • expiry ${licRow.expiry} • ${licRow.status}`
+          : `No license found for ${device}`,
+        "ok"
+      );
       fillDashEvents(evts);
       fillDashSessions(sess);
-
     }catch(e){
-      showAlert($("quickErr"), "Lookup failed: " + (e.message || "unknown error"), "err");
+      showAlert($("quickErr"), "Lookup failed: " + (e.message||"unknown"));
     }
   });
 
@@ -1238,29 +1151,30 @@
     $("licLoading").classList.add("show");
     const device = $("licFilterDevice").value.trim();
     const limit = device ? 1 : Number($("licLimit").value || 100);
-
     try{
-      const data = await cached("licenses", {device, limit}, () => fetchJSON(authedUrl("/admin/licenses", {device_id: device || undefined, limit})));
+      const data = await cached("licenses", {device, limit}, () =>
+        fetchJSON(authedUrl("/admin/licenses", {device_id: device || undefined, limit}))
+      );
       state.last.licenses = data || [];
       renderLicenses(state.last.licenses);
       $("licLoading").classList.remove("show");
     }catch(e){
       $("licLoading").classList.remove("show");
-      if(e.status === 401){ showAlert($("licErr"), "Unauthorized. Logging out…", "err"); setTimeout(logout, 800); return; }
-      showAlert($("licErr"), "Failed to load licenses: " + (e.message || "unknown"), "err");
+      if(e.status === 401){ showAlert($("licErr"), "Unauthorized. Logging out…"); setTimeout(logout, 800); return; }
+      showAlert($("licErr"), "Failed to load licenses: " + (e.message||"unknown"));
     }
   }
 
   function renderLicenses(rows){
     const tb = $("licTable").querySelector("tbody");
     tb.innerHTML = "";
-    for(const r of rows || []){
+    (rows||[]).forEach(r => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
-        <td data-label="username">${escapeHtml(r.username || "")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
+        <td data-label="username">${escapeHtml(r.username||"")}</td>
         <td data-label="level">${tagLevel(r.level)}</td>
-        <td class="mono" data-label="expiry">${escapeHtml(r.expiry || "")}</td>
+        <td class="mono" data-label="expiry">${escapeHtml(r.expiry||"")}</td>
         <td data-label="status">${tagStatus(r.status, r.expiry)}</td>
         <td data-label="actions">
           <button class="rowbtn" data-act="edit" data-id="${escapeAttr(r.device_id)}">Edit</button>
@@ -1268,14 +1182,12 @@
         </td>
       `;
       tb.appendChild(tr);
-    }
-
+    });
     tb.querySelectorAll("button[data-act='edit']").forEach(b => b.addEventListener("click", () => openEdit(b.dataset.id)));
     tb.querySelectorAll("button[data-act='del']").forEach(b => b.addEventListener("click", () => doDelete(b.dataset.id)));
   }
 
   $("licLoadBtn").addEventListener("click", () => {
-    // clear cache for this query so it reloads
     const device = $("licFilterDevice").value.trim();
     const limit = device ? 1 : Number($("licLimit").value || 100);
     state.cache.delete(cacheKey("licenses", {device, limit}));
@@ -1287,12 +1199,8 @@
     loadLicenses();
   });
 
-  $("licExportCsv").addEventListener("click", () => {
-    download(tableToCSV($("licTable")), "licenses.csv", "text/csv");
-  });
-  $("licExportJson").addEventListener("click", () => {
-    download(JSON.stringify(state.last.licenses || [], null, 2), "licenses.json", "application/json");
-  });
+  $("licExportCsv").addEventListener("click", () => download(tableToCSV($("licTable")), "licenses.csv", "text/csv"));
+  $("licExportJson").addEventListener("click", () => download(JSON.stringify(state.last.licenses||[], null, 2), "licenses.json", "application/json"));
 
   // Sessions
   async function loadSessions(){
@@ -1300,37 +1208,36 @@
     $("sesLoading").classList.add("show");
     const device = $("sesDevice").value.trim();
     const limit = Number($("sesLimit").value || 100);
-
     try{
-      const data = await cached("sessions", {device, limit}, () => fetchJSON(authedUrl("/admin/sessions", {device_id: device || undefined, limit})));
+      const data = await cached("sessions", {device, limit}, () =>
+        fetchJSON(authedUrl("/admin/sessions", {device_id: device || undefined, limit}))
+      );
       state.last.sessions = data || [];
       renderSessions(state.last.sessions);
       $("sesLoading").classList.remove("show");
     }catch(e){
       $("sesLoading").classList.remove("show");
-      if(e.status === 401){ showAlert($("sesErr"), "Unauthorized. Logging out…", "err"); setTimeout(logout, 800); return; }
-      showAlert($("sesErr"), "Failed to load sessions: " + (e.message || "unknown"), "err");
+      if(e.status === 401){ showAlert($("sesErr"), "Unauthorized. Logging out…"); setTimeout(logout, 800); return; }
+      showAlert($("sesErr"), "Failed to load sessions: " + (e.message||"unknown"));
     }
   }
-
   function renderSessions(rows){
     const tb = $("sesTable").querySelector("tbody");
     tb.innerHTML = "";
-    for(const r of rows || []){
+    (rows||[]).forEach(r => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="session_id">${escapeHtml(r.session_id || "")}</td>
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
+        <td class="mono" data-label="session_id">${escapeHtml(r.session_id||"")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
         <td data-label="level">${tagLevel(r.level)}</td>
         <td data-label="start">${escapeHtml(fmtDateTime(r.start_time))}</td>
         <td data-label="end">${escapeHtml(fmtDateTime(r.end_time))}</td>
         <td data-label="status">${tagSessionStatus(r.status)}</td>
-        <td data-label="duration_sec" class="mono">${escapeHtml(String(r.duration_sec ?? ""))}</td>
+        <td class="mono" data-label="duration_sec">${escapeHtml(String(r.duration_sec ?? ""))}</td>
       `;
       tb.appendChild(tr);
-    }
+    });
   }
-
   $("sesLoadBtn").addEventListener("click", () => {
     const device = $("sesDevice").value.trim();
     const limit = Number($("sesLimit").value || 100);
@@ -1342,9 +1249,8 @@
     state.cache.clear();
     loadSessions();
   });
-
   $("sesExportCsv").addEventListener("click", () => download(tableToCSV($("sesTable")), "sessions.csv", "text/csv"));
-  $("sesExportJson").addEventListener("click", () => download(JSON.stringify(state.last.sessions || [], null, 2), "sessions.json", "application/json"));
+  $("sesExportJson").addEventListener("click", () => download(JSON.stringify(state.last.sessions||[], null, 2), "sessions.json", "application/json"));
 
   // Events
   async function loadEvents(){
@@ -1353,35 +1259,34 @@
     const device = $("evtDevice").value.trim();
     const date = $("evtDate").value;
     const limit = Number($("evtLimit").value || 100);
-
     try{
-      const data = await cached("events", {device, date, limit}, () => fetchJSON(authedUrl("/admin/events", {device_id: device || undefined, date: date || undefined, limit})));
+      const data = await cached("events", {device, date, limit}, () =>
+        fetchJSON(authedUrl("/admin/events", {device_id: device || undefined, date: date || undefined, limit}))
+      );
       state.last.events = data || [];
       renderEvents(state.last.events);
       $("evtLoading").classList.remove("show");
     }catch(e){
       $("evtLoading").classList.remove("show");
-      if(e.status === 401){ showAlert($("evtErr"), "Unauthorized. Logging out…", "err"); setTimeout(logout, 800); return; }
-      showAlert($("evtErr"), "Failed to load events: " + (e.message || "unknown"), "err");
+      if(e.status === 401){ showAlert($("evtErr"), "Unauthorized. Logging out…"); setTimeout(logout, 800); return; }
+      showAlert($("evtErr"), "Failed to load events: " + (e.message||"unknown"));
     }
   }
-
   function renderEvents(rows){
     const tb = $("evtTable").querySelector("tbody");
     tb.innerHTML = "";
-    for(const r of rows || []){
+    (rows||[]).forEach(r => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td class="mono" data-label="id">${escapeHtml(String(r.id ?? ""))}</td>
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
-        <td data-label="event">${escapeHtml(r.event || "")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
+        <td data-label="event">${escapeHtml(r.event||"")}</td>
         <td data-label="result">${tagResult(r.result)}</td>
         <td data-label="created_at">${escapeHtml(fmtDateTime(r.created_at))}</td>
       `;
       tb.appendChild(tr);
-    }
+    });
   }
-
   $("evtLoadBtn").addEventListener("click", () => {
     const device = $("evtDevice").value.trim();
     const date = $("evtDate").value;
@@ -1395,54 +1300,52 @@
     state.cache.clear();
     loadEvents();
   });
-
   $("evtExportCsv").addEventListener("click", () => download(tableToCSV($("evtTable")), "events.csv", "text/csv"));
-  $("evtExportJson").addEventListener("click", () => download(JSON.stringify(state.last.events || [], null, 2), "events.json", "application/json"));
+  $("evtExportJson").addEventListener("click", () => download(JSON.stringify(state.last.events||[], null, 2), "events.json", "application/json"));
 
   // Unauth
   async function loadUnauth(){
     showAlert($("unErr"), "");
     $("unLoading").classList.add("show");
     const limit = Number($("unLimit").value || 100);
-
     try{
-      const data = await cached("unauth", {limit}, () => fetchJSON(authedUrl("/admin/unauthorised", {limit})));
+      const data = await cached("unauth", {limit}, () =>
+        fetchJSON(authedUrl("/admin/unauthorised", {limit}))
+      );
       state.last.unauth = data || [];
       renderUnauth(state.last.unauth);
       $("unLoading").classList.remove("show");
     }catch(e){
       $("unLoading").classList.remove("show");
-      if(e.status === 401){ showAlert($("unErr"), "Unauthorized. Logging out…", "err"); setTimeout(logout, 800); return; }
-      showAlert($("unErr"), "Failed to load unauthorized: " + (e.message || "unknown"), "err");
+      if(e.status === 401){ showAlert($("unErr"), "Unauthorized. Logging out…"); setTimeout(logout, 800); return; }
+      showAlert($("unErr"), "Failed to load unauthorized: " + (e.message||"unknown"));
     }
   }
-
   function renderUnauth(rows){
     const tb = $("unTable").querySelector("tbody");
     tb.innerHTML = "";
-    for(const r of rows || []){
+    (rows||[]).forEach(r => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
-        <td data-label="event">${escapeHtml(r.event || "")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
+        <td data-label="event">${escapeHtml(r.event||"")}</td>
         <td data-label="result">${tagResult(r.result)}</td>
         <td data-label="created_at">${escapeHtml(fmtDateTime(r.created_at))}</td>
       `;
       tb.appendChild(tr);
-    }
+    });
   }
-
   $("unLoadBtn").addEventListener("click", () => {
     const limit = Number($("unLimit").value || 100);
     state.cache.delete(cacheKey("unauth", {limit}));
     loadUnauth();
   });
-
   $("unExportCsv").addEventListener("click", () => download(tableToCSV($("unTable")), "unauthorised.csv", "text/csv"));
-  $("unExportJson").addEventListener("click", () => download(JSON.stringify(state.last.unauth || [], null, 2), "unauthorised.json", "application/json"));
+  $("unExportJson").addEventListener("click", () => download(JSON.stringify(state.last.unauth||[], null, 2), "unauthorised.json", "application/json"));
 
-  // License modal actions
+  // Modal (✅ status removed, always active)
   function openCreate(){
+    applyMinDate();
     state.modalMode = "create";
     state.modalDevice = null;
     $("modalTitle").textContent = "Add License";
@@ -1451,13 +1354,13 @@
     $("mUser").value = "";
     $("mLevel").value = "";
     $("mExpiry").value = "";
-    $("mStatus").value = "";
     showAlert($("modalErr"), "");
     showAlert($("modalOk"), "");
     $("licModal").classList.add("show");
   }
 
   async function openEdit(device){
+    applyMinDate();
     state.modalMode = "edit";
     state.modalDevice = device;
     $("modalTitle").textContent = "Edit License";
@@ -1465,7 +1368,6 @@
     showAlert($("modalOk"), "");
     $("licModal").classList.add("show");
     try{
-      // fastest: use current list first
       const row = (state.last.licenses || []).find(x => x.device_id === device);
       let lic = row;
       if(!lic){
@@ -1473,14 +1375,14 @@
         lic = data && data[0];
       }
       if(!lic) throw new Error("License not found");
+
       $("mDevice").value = lic.device_id || "";
       $("mUser").value = lic.username || "";
       $("mLevel").value = (lic.level || "").toLowerCase();
       $("mExpiry").value = lic.expiry || "";
-      $("mStatus").value = (lic.status || "").toLowerCase();
       $("mDevice").disabled = true;
     }catch(e){
-      showAlert($("modalErr"), "Could not load license: " + (e.message || "unknown"), "err");
+      showAlert($("modalErr"), "Could not load license: " + (e.message || "unknown"));
     }
   }
 
@@ -1488,10 +1390,9 @@
     if(!confirm("Delete license for device_id: " + device + " ?")) return;
     try{
       await fetchJSON(authedUrl("/admin/licenses", {device_id: device}), { method:"DELETE" });
-      // clear caches (so tables refresh)
       state.cache.clear();
       await loadLicenses();
-      await loadDashboard(true);
+      await loadDashboard();
     }catch(e){
       alert("Delete failed: " + (e.message || "unknown"));
     }
@@ -1505,17 +1406,26 @@
   $("modalSave").addEventListener("click", async () => {
     showAlert($("modalErr"), "");
     showAlert($("modalOk"), "");
+
     const device = $("mDevice").value.trim();
     const username = $("mUser").value.trim();
     const level = $("mLevel").value;
     const expiry = $("mExpiry").value;
-    const status = $("mStatus").value;
 
-    if(!device || !username || !level || !expiry || !status){
-      showAlert($("modalErr"), "All fields are required.", "err"); return;
+    if(!device || !username || !level || !expiry){
+      showAlert($("modalErr"), "All fields are required.");
+      return;
     }
 
-    const payload = { device_id: device, username, level, expiry, status };
+    // ✅ expiry cannot be past
+    const t = todayISO();
+    if(expiry < t){
+      showAlert($("modalErr"), "Expiry date cannot be in the past.");
+      return;
+    }
+
+    // ✅ always active
+    const payload = { device_id: device, username, level, expiry, status: "active" };
 
     try{
       $("modalSave").textContent = "Saving…";
@@ -1537,9 +1447,9 @@
       $("licModal").classList.remove("show");
       state.cache.clear();
       await loadLicenses();
-      await loadDashboard(true);
+      await loadDashboard();
     }catch(e){
-      showAlert($("modalErr"), "Save failed: " + (e.message || "unknown"), "err");
+      showAlert($("modalErr"), "Save failed: " + (e.message || "unknown"));
     }finally{
       $("modalSave").textContent = "Save";
     }
@@ -1551,14 +1461,12 @@
     const end = new Date(String(expiry) + "T23:59:59.999Z");
     return end.getTime() < Date.now();
   }
-
   function tagLevel(level){
     const v = (level || "").toLowerCase();
     if(v === "premium") return `<span class="tag good">premium</span>`;
     if(v === "lite") return `<span class="tag">lite</span>`;
     return `<span class="tag warn">${escapeHtml(level||"unknown")}</span>`;
   }
-
   function tagSessionStatus(st){
     const v = (st || "").toLowerCase();
     if(v === "ended") return `<span class="tag good">ended</span>`;
@@ -1566,7 +1474,6 @@
     if(v === "aborted") return `<span class="tag bad">aborted</span>`;
     return `<span class="tag">${escapeHtml(st||"")}</span>`;
   }
-
   function tagResult(res){
     const v = (res || "").toLowerCase();
     if(v === "valid" || v === "ok") return `<span class="tag good">${escapeHtml(res)}</span>`;
@@ -1574,7 +1481,6 @@
     if(v === "unauthorised" || v === "inactive") return `<span class="tag bad">${escapeHtml(res)}</span>`;
     return `<span class="tag">${escapeHtml(res || "")}</span>`;
   }
-
   function tagStatus(status, expiry){
     const st = (status || "").toLowerCase();
     const expired = isExpiredDate(expiry);
@@ -1586,25 +1492,21 @@
   function escapeHtml(s){
     return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
   }
-  function escapeAttr(s){
-    return String(s ?? "").replace(/"/g, "&quot;");
-  }
+  function escapeAttr(s){ return String(s ?? "").replace(/"/g, "&quot;"); }
 
-  // Export buttons (use last loaded data)
+  // Export buttons
   $("licExportCsv").addEventListener("click", () => download(tableToCSV($("licTable")), "licenses.csv", "text/csv"));
   $("licExportJson").addEventListener("click", () => download(JSON.stringify(state.last.licenses||[], null, 2), "licenses.json", "application/json"));
-
   $("sesExportCsv").addEventListener("click", () => download(tableToCSV($("sesTable")), "sessions.csv", "text/csv"));
   $("sesExportJson").addEventListener("click", () => download(JSON.stringify(state.last.sessions||[], null, 2), "sessions.json", "application/json"));
-
   $("evtExportCsv").addEventListener("click", () => download(tableToCSV($("evtTable")), "events.csv", "text/csv"));
   $("evtExportJson").addEventListener("click", () => download(JSON.stringify(state.last.events||[], null, 2), "events.json", "application/json"));
-
   $("unExportCsv").addEventListener("click", () => download(tableToCSV($("unTable")), "unauthorised.csv", "text/csv"));
   $("unExportJson").addEventListener("click", () => download(JSON.stringify(state.last.unauth||[], null, 2), "unauthorised.json", "application/json"));
 
   // Startup
   (async function init(){
+    applyMinDate();
     setBackendLine("Connecting…");
     await pingBackend();
 
@@ -1615,7 +1517,7 @@
         await validateToken(saved);
         setLoggedIn(true);
         showView("dash");
-        await loadDashboard(false);
+        await loadDashboard();
       }catch{
         logout();
       }
