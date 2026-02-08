@@ -8,40 +8,54 @@
     :root{
       --bg:#0b1020;
       --panel:#0f1733;
+      --panel2:#0c132b;
       --text:#e9edff;
       --muted:#a9b2e5;
-      --line: rgba(255,255,255,.10);
+      --line: rgba(255,255,255,.08);
       --brand:#7c5cff;
       --brand2:#42e8ff;
       --good:#2ee59d;
       --warn:#ffcc66;
       --bad:#ff5c7a;
-      --shadow: 0 10px 26px rgba(0,0,0,.35);
-      --radius:18px;
+      --shadow: 0 12px 28px rgba(0,0,0,.35);
+      --radius:16px;
       --radius2:22px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
+
+    /* ✅ FIX ANDROID BLUE OVERSCROLL GLOW:
+       body doesn't scroll; our #scrollRoot scrolls */
     body{
       margin:0;
+      height:100vh;
+      overflow:hidden;
       font-family:var(--sans);
       color:var(--text);
       background:
-        radial-gradient(900px 600px at 20% 0%, rgba(124,92,255,.22), transparent 60%),
-        radial-gradient(900px 600px at 90% 20%, rgba(66,232,255,.16), transparent 60%),
-        radial-gradient(900px 600px at 40% 100%, rgba(46,229,157,.10), transparent 60%),
+        radial-gradient(1200px 800px at 20% 0%, rgba(124,92,255,.35), transparent 60%),
+        radial-gradient(1000px 700px at 90% 20%, rgba(66,232,255,.22), transparent 55%),
+        radial-gradient(900px 600px at 40% 100%, rgba(46,229,157,.14), transparent 55%),
         var(--bg);
+    }
+
+    #scrollRoot{
+      height:100vh;
+      overflow:auto;
+      overscroll-behavior: contain; /* ✅ stops the blue glow */
+      -webkit-overflow-scrolling: touch;
     }
 
     .wrap{
       max-width:1200px;
       margin:0 auto;
-      padding:16px 12px 32px;
+      padding:18px 14px 36px;
     }
 
-    /* ✅ NO STICKY, NO BACKDROP FILTER (fix blue scroll overlay) */
+    /* Top bar (glass effect BACK ON) */
     .topbar{
       display:flex;
       align-items:center;
@@ -49,82 +63,58 @@
       gap:12px;
       padding:14px 16px;
       border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(20,28,60,.92), rgba(14,20,46,.92));
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border-radius:var(--radius2);
       box-shadow:var(--shadow);
+      position:sticky;
+      top:10px;
+      z-index:5;
+      backdrop-filter: blur(10px);
     }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:0;
-    }
+    .brand{display:flex;align-items:center;gap:10px;min-width:0;}
     .logo{
       width:38px;height:38px;border-radius:12px;
       background:linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow:0 10px 24px rgba(124,92,255,.25);
+      box-shadow:0 10px 24px rgba(124,92,255,.35);
       display:grid;place-items:center;
       flex:0 0 auto;
     }
     .brand h1{
-      font-size:16px;
-      margin:0;
-      letter-spacing:.3px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      font-size:16px;margin:0;letter-spacing:.3px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
     }
-    .brand .sub{
-      display:block;
-      color:var(--muted);
-      font-size:12px;
-      margin-top:2px;
-    }
+    .brand .sub{display:block;color:var(--muted);font-size:12px;margin-top:2px;}
 
-    .top-actions{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
+    .top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
     .pill{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 10px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      background: rgba(255,255,255,.04);
-      color:var(--muted);
-      font-size:12px;
+      display:flex;align-items:center;gap:8px;
+      padding:8px 10px;border:1px solid var(--line);
+      border-radius:999px;background:rgba(255,255,255,.04);
+      color:var(--muted);font-size:12px;
     }
-    .pill strong{color:var(--text); font-weight:750}
-
+    .pill strong{color:var(--text);font-weight:650}
     .btn{
       appearance:none;border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
       color:var(--text);
-      padding:9px 12px;
-      border-radius:12px;
+      padding:9px 12px;border-radius:12px;
       cursor:pointer;
       transition:transform .08s ease, background .12s ease, border-color .12s ease;
-      font-weight:700;
-      font-size:13px;
+      font-weight:600;font-size:13px;
     }
-    .btn:hover{background:rgba(255,255,255,.08)}
+    .btn:hover{background:rgba(255,255,255,.07)}
     .btn:active{transform:translateY(1px)}
     .btn.primary{
       border-color: rgba(124,92,255,.45);
-      background:linear-gradient(135deg, rgba(124,92,255,.26), rgba(66,232,255,.12));
-      box-shadow:0 10px 22px rgba(124,92,255,.14);
+      background:linear-gradient(135deg, rgba(124,92,255,.35), rgba(66,232,255,.16));
+      box-shadow:0 10px 22px rgba(124,92,255,.18);
     }
     .btn.danger{
       border-color: rgba(255,92,122,.45);
-      background:linear-gradient(135deg, rgba(255,92,122,.18), rgba(255,255,255,.04));
+      background:linear-gradient(135deg, rgba(255,92,122,.22), rgba(255,255,255,.03));
     }
 
+    /* Layout */
     .grid{
       display:grid;
       grid-template-columns: 260px 1fr;
@@ -133,74 +123,56 @@
       align-items:start;
     }
 
-    /* ✅ sidebar NOT sticky */
     .sidebar{
       border:1px solid var(--line);
       border-radius:var(--radius2);
-      background: rgba(18,25,55,.75);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
       box-shadow:var(--shadow);
       padding:10px;
+      position:sticky;
+      top:86px;
+      backdrop-filter: blur(10px);
     }
     .navbtn{
       width:100%;
-      display:flex;
-      align-items:center;
-      gap:10px;
+      display:flex;align-items:center;gap:10px;
       border:1px solid transparent;
       background:transparent;
       color:var(--muted);
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      text-align:left;
-      font-weight:800;
+      padding:10px 12px;border-radius:14px;
+      cursor:pointer;text-align:left;font-weight:700;
       transition:background .12s ease, color .12s ease, border-color .12s ease;
     }
     .navbtn.active{
       color:var(--text);
       border-color: rgba(124,92,255,.30);
-      background:linear-gradient(135deg, rgba(124,92,255,.18), rgba(66,232,255,.10));
+      background:linear-gradient(135deg, rgba(124,92,255,.20), rgba(66,232,255,.10));
     }
     .navbtn:hover{background:rgba(255,255,255,.04); color:var(--text)}
     .sidehint{
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:14px;
+      margin-top:10px;padding:10px 12px;border-radius:14px;
       border:1px dashed rgba(255,255,255,.14);
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.4;
+      color:var(--muted);font-size:12px;line-height:1.4;
     }
 
     .panel{
       border:1px solid var(--line);
       border-radius:var(--radius2);
-      background: rgba(18,25,55,.75);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
       box-shadow:var(--shadow);
       overflow:hidden;
+      backdrop-filter: blur(10px);
     }
     .panel-hd{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:14px 16px;
-      border-bottom:1px solid var(--line);
-      background: rgba(255,255,255,.03);
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:14px 16px;border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
     }
-    .panel-hd h2{
-      margin:0;
-      font-size:15px;
-      letter-spacing:.2px;
-    }
-    .panel-hd .right{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
+    .panel-hd h2{margin:0;font-size:15px;letter-spacing:.2px;}
+    .panel-hd .right{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
     .panel-bd{padding:14px 16px;}
 
+    /* Cards */
     .cards{
       display:grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -210,50 +182,37 @@
       border:1px solid var(--line);
       border-radius:16px;
       padding:12px;
-      background: rgba(255,255,255,.03);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
       min-height:84px;
+      position:relative;
+      overflow:hidden;
     }
-    .card .k{color:var(--muted); font-size:12px; font-weight:750}
-    .card .v{font-size:22px; font-weight:900; margin-top:4px}
+    .card .k{color:var(--muted); font-size:12px; font-weight:650}
+    .card .v{font-size:22px; font-weight:850; margin-top:4px}
     .card .badge{
       display:inline-flex; align-items:center; gap:6px;
-      padding:6px 10px;
-      border-radius:999px;
+      padding:6px 10px;border-radius:999px;
       border:1px solid var(--line);
-      font-size:12px;
-      color:var(--muted);
+      font-size:12px;color:var(--muted);
       background:rgba(255,255,255,.03);
       margin-top:8px;
     }
 
     .toolbar{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-      justify-content:space-between;
+      display:flex;flex-wrap:wrap;gap:8px;
+      align-items:center;justify-content:space-between;
       margin-bottom:10px;
     }
-    .toolbar .left, .toolbar .right{
-      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
-    }
+    .toolbar .left, .toolbar .right{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
     .input{
-      display:flex;
-      align-items:center;
-      gap:8px;
+      display:flex;align-items:center;gap:8px;
       border:1px solid var(--line);
       background:rgba(255,255,255,.03);
-      border-radius:14px;
-      padding:9px 10px;
-      min-width:200px;
+      border-radius:14px;padding:9px 10px;min-width:200px;
     }
     .input input, .input select{
-      width:100%;
-      border:none;
-      outline:none;
-      background:transparent;
-      color:var(--text);
-      font-size:13px;
+      width:100%;border:none;outline:none;
+      background:transparent;color:var(--text);font-size:13px;
     }
     .input input::placeholder{color:rgba(169,178,229,.6)}
     select option{color:#111}
@@ -262,23 +221,19 @@
       border:1px solid var(--line);
       border-radius:16px;
       overflow:hidden;
-      background: rgba(0,0,0,.15);
+      background:rgba(10,15,28,.35);
     }
-    table{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      font-size:13px;
-    }
+    table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;}
     thead th{
       text-align:left;
-      color:rgba(233,237,255,.9);
-      font-weight:900;
+      color:rgba(233,237,255,.85);
+      font-weight:800;
       background:rgba(255,255,255,.04);
       border-bottom:1px solid var(--line);
       padding:11px 12px;
-      /* ✅ no sticky headers */
-      position:static;
+      position:sticky;
+      top:0;
+      z-index:1;
     }
     tbody td{
       padding:10px 12px;
@@ -288,28 +243,27 @@
     }
     tbody tr:hover td{background:rgba(255,255,255,.03)}
     .mono{font-family:var(--mono); font-size:12px}
+
     .tag{
-      display:inline-flex; align-items:center; gap:6px;
-      padding:4px 8px;
-      border-radius:999px;
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 8px;border-radius:999px;
       border:1px solid var(--line);
       background:rgba(255,255,255,.03);
       color:var(--muted);
-      font-weight:800;
-      font-size:12px;
+      font-weight:700;font-size:12px;
       white-space:nowrap;
     }
     .tag.good{border-color: rgba(46,229,157,.30); color: rgba(46,229,157,.95)}
     .tag.bad{border-color: rgba(255,92,122,.35); color: rgba(255,92,122,.95)}
     .tag.warn{border-color: rgba(255,204,102,.35); color: rgba(255,204,102,.95)}
+
     .rowbtn{
-      padding:7px 10px;
-      border-radius:12px;
+      padding:7px 10px;border-radius:12px;
       border:1px solid var(--line);
       background:rgba(255,255,255,.03);
       color:var(--text);
       cursor:pointer;
-      font-weight:900;
+      font-weight:800;
       font-size:12px;
       margin-right:6px;
     }
@@ -317,36 +271,22 @@
     .rowbtn.danger{border-color: rgba(255,92,122,.35);}
 
     .alert{
-      display:none;
-      margin:10px 0 0;
-      padding:10px 12px;
-      border-radius:14px;
+      display:none;margin:10px 0 0;
+      padding:10px 12px;border-radius:14px;
       border:1px solid var(--line);
       background:rgba(255,255,255,.03);
       color:var(--muted);
-      font-size:13px;
-      line-height:1.35;
+      font-size:13px;line-height:1.35;
     }
     .alert.show{display:block}
-    .alert.err{
-      border-color: rgba(255,92,122,.35);
-      color: rgba(255,160,175,.95);
-      background: rgba(255,92,122,.07);
-    }
-    .alert.ok{
-      border-color: rgba(46,229,157,.32);
-      color: rgba(46,229,157,.95);
-      background: rgba(46,229,157,.07);
-    }
-    .alert.loading{
-      color: rgba(233,237,255,.88);
-      font-style:italic;
-    }
+    .alert.err{border-color: rgba(255,92,122,.35); color: rgba(255,160,175,.95); background: rgba(255,92,122,.07);}
+    .alert.ok{border-color: rgba(46,229,157,.32); color: rgba(46,229,157,.95); background: rgba(46,229,157,.07);}
+    .alert.loading{color: rgba(233,237,255,.88); font-style:italic;}
 
     /* Modal */
     .modal{
       position:fixed; inset:0;
-      background:rgba(0,0,0,.58);
+      background:rgba(0,0,0,.55);
       display:none;
       align-items:center;
       justify-content:center;
@@ -358,88 +298,61 @@
       width:min(720px, 100%);
       border-radius:22px;
       border:1px solid var(--line);
-      background: rgba(18,25,55,.95);
+      background:linear-gradient(180deg, rgba(15,23,51,.98), rgba(10,14,30,.98));
       box-shadow: 0 18px 50px rgba(0,0,0,.55);
       overflow:hidden;
+      backdrop-filter: blur(10px);
     }
     .modal-hd{
       display:flex; align-items:center; justify-content:space-between;
-      padding:14px 16px;
-      border-bottom:1px solid var(--line);
+      padding:14px 16px;border-bottom:1px solid var(--line);
       background:rgba(255,255,255,.03);
     }
-    .modal-hd h3{margin:0; font-size:14px}
+    .modal-hd h3{margin:0;font-size:14px}
     .modal-bd{padding:14px 16px}
-    .formgrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
+    .formgrid{display:grid;grid-template-columns: 1fr 1fr;gap:10px;}
     .field{
       border:1px solid var(--line);
-      border-radius:14px;
-      padding:10px 10px;
+      border-radius:14px;padding:10px 10px;
       background:rgba(255,255,255,.03);
     }
     .field label{
-      display:block;
-      font-size:12px;
-      color:var(--muted);
-      font-weight:850;
-      margin-bottom:6px;
+      display:block;font-size:12px;color:var(--muted);
+      font-weight:750;margin-bottom:6px;
     }
-    .field input, .field select{
-      width:100%;
-      border:none; outline:none;
-      background:transparent;
-      color:var(--text);
-      font-size:13px;
-    }
+    .field input,.field select{width:100%;border:none;outline:none;background:transparent;color:var(--text);font-size:13px;}
     .modal-ft{
-      display:flex;
-      gap:10px;
-      justify-content:flex-end;
-      padding:12px 16px;
-      border-top:1px solid var(--line);
-      background:rgba(255,255,255,.02);
-      flex-wrap:wrap;
+      display:flex;gap:10px;justify-content:flex-end;
+      padding:12px 16px;border-top:1px solid var(--line);
+      background:rgba(255,255,255,.02);flex-wrap:wrap;
     }
 
     /* Login */
     .login{
-      max-width:520px;
-      margin:22px auto 0;
+      max-width:520px;margin:30px auto 0;
       border:1px solid var(--line);
       border-radius:22px;
-      background: rgba(18,25,55,.75);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       box-shadow:var(--shadow);
       overflow:hidden;
+      backdrop-filter: blur(10px);
     }
     .login .hd{
       padding:18px 18px 14px;
       border-bottom:1px solid var(--line);
       background:linear-gradient(135deg, rgba(124,92,255,.22), rgba(66,232,255,.10));
     }
-    .login .hd h2{margin:0; font-size:16px}
-    .login .hd p{margin:6px 0 0; color:rgba(233,237,255,.8); font-size:13px}
+    .login .hd h2{margin:0;font-size:16px}
+    .login .hd p{margin:6px 0 0;color:rgba(233,237,255,.8);font-size:13px}
     .login .bd{padding:16px 18px 18px}
-    .login .row{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
-    .login .actions{
-      display:flex; gap:10px; justify-content:space-between; align-items:center; flex-wrap:wrap;
-      margin-top:10px;
-    }
-    .small{
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.35;
-    }
+    .login .row{display:grid;grid-template-columns: 1fr 1fr;gap:10px;}
+    .login .row .field{background:rgba(0,0,0,.10)}
+    .login .actions{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-top:10px;}
+    .small{color:var(--muted);font-size:12px;line-height:1.35;}
 
     @media (max-width: 920px){
       .grid{grid-template-columns: 1fr}
+      .sidebar{position:relative; top:auto}
       .cards{grid-template-columns: repeat(2, minmax(0, 1fr));}
     }
     @media (max-width: 520px){
@@ -454,14 +367,16 @@
         content: attr(data-label);
         display:block;
         color:var(--muted);
-        font-weight:900;
+        font-weight:800;
         margin-bottom:4px;
         font-size:12px;
       }
     }
   </style>
 </head>
+
 <body>
+<div id="scrollRoot">
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
@@ -505,8 +420,7 @@
         <div class="actions">
           <button class="btn primary" id="loginBtn">Login</button>
           <div class="small">
-            Token is stored in <b>sessionStorage</b> (clears when you close browser).<br/>
-            If token is wrong, backend returns 401.
+            Tip: token is stored in <b>sessionStorage</b> (clears when you close browser).
           </div>
         </div>
         <div class="alert err" id="loginErr"></div>
@@ -523,8 +437,8 @@
         <button class="navbtn" data-view="unauth">Unauthorized</button>
 
         <div class="sidehint">
-          ⚡ Faster loading: defaults are small limits + 30s cache.<br/>
-          Use filters for quickest results.
+          ✅ Blue scroll glow fixed (custom scroll container).<br/>
+          ⚡ Dashboard analytics computed on frontend from sessions + events.
         </div>
       </div>
 
@@ -540,6 +454,7 @@
           <div class="alert loading show" id="dashLoading">Loading dashboard…</div>
           <div class="alert err" id="dashErr"></div>
 
+          <!-- Main stats from backend /admin/stats -->
           <div class="cards" id="statCards" style="display:none;">
             <div class="card"><div class="k">Total licenses</div><div class="v" id="cTotal">0</div><div class="badge">All</div></div>
             <div class="card"><div class="k">Active</div><div class="v" id="cActive">0</div><div class="badge"><span style="width:8px;height:8px;border-radius:99px;background:var(--good);display:inline-block"></span> Active</div></div>
@@ -548,16 +463,38 @@
             <div class="card"><div class="k">Premium</div><div class="v" id="cPremium">0</div><div class="badge">Premium</div></div>
           </div>
 
+          <!-- NEW: frontend calculated analytics -->
+          <div style="margin-top:12px;">
+            <div class="cards" id="calcCards" style="display:none; grid-template-columns: repeat(3, minmax(0, 1fr));">
+              <div class="card">
+                <div class="k">Today licensed usage</div>
+                <div class="v" id="cTodayUsage">0m</div>
+                <div class="badge">Sum duration (ended sessions)</div>
+              </div>
+              <div class="card">
+                <div class="k">Last 7 days licensed usage</div>
+                <div class="v" id="cWeekUsage">0h</div>
+                <div class="badge">Rolling 7 days</div>
+              </div>
+              <div class="card">
+                <div class="k">Today unauthorised + expired</div>
+                <div class="v" id="cTodayBad">0</div>
+                <div class="badge">Events result = unauthorised/expired/inactive</div>
+              </div>
+            </div>
+          </div>
+
           <div class="toolbar" style="margin-top:14px;">
             <div class="left">
               <div class="input" style="min-width:320px;">
                 <span style="opacity:.8">🔎</span>
-                <input id="quickDevice" placeholder="Quick lookup: device_id (license + recent logs)" />
+                <input id="quickDevice" placeholder="Quick lookup: enter device_id (license + recent logs)" />
               </div>
               <button class="btn primary" id="quickLookupBtn">Lookup</button>
             </div>
             <div class="right">
-              <span class="pill">Cache <strong>30s</strong></span>
+              <span class="pill">Cache: <strong>30s</strong></span>
+              <span class="pill">Fetch limit: <strong>1000</strong> (analytics)</span>
             </div>
           </div>
 
@@ -565,13 +502,13 @@
             <div class="panel-hd">
               <h2>Recent activity</h2>
               <div class="right">
-                <button class="btn" id="dashRefreshMini">Refresh mini</button>
+                <button class="btn" id="dashRefreshMini">Refresh</button>
               </div>
             </div>
             <div class="panel-bd">
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                 <div>
-                  <div style="font-weight:900; margin-bottom:8px;">Unauthorized / Expired checks</div>
+                  <div style="font-weight:850; color:rgba(233,237,255,.92); margin-bottom:8px;">Unauthorized / Expired checks (latest)</div>
                   <div class="table-wrap">
                     <table id="dashUnauthTable">
                       <thead><tr><th>device_id</th><th>result</th><th>time</th></tr></thead>
@@ -579,9 +516,8 @@
                     </table>
                   </div>
                 </div>
-
                 <div>
-                  <div style="font-weight:900; margin-bottom:8px;">Recent sessions</div>
+                  <div style="font-weight:850; color:rgba(233,237,255,.92); margin-bottom:8px;">Recent sessions (latest)</div>
                   <div class="table-wrap">
                     <table id="dashSessionsTable">
                       <thead><tr><th>device_id</th><th>status</th><th>duration</th><th>start</th></tr></thead>
@@ -592,7 +528,7 @@
               </div>
 
               <div style="margin-top:12px;">
-                <div style="font-weight:900; margin-bottom:8px;">Recent events</div>
+                <div style="font-weight:850; color:rgba(233,237,255,.92); margin-bottom:8px;">Recent events (latest)</div>
                 <div class="table-wrap">
                   <table id="dashEventsTable">
                     <thead><tr><th>device_id</th><th>event</th><th>result</th><th>time</th></tr></thead>
@@ -605,6 +541,28 @@
               <div class="alert err" id="quickErr"></div>
             </div>
           </div>
+
+          <!-- NEW: Top devices today -->
+          <div class="panel" style="margin-top:12px;">
+            <div class="panel-hd">
+              <h2>Top licensed devices today (by duration)</h2>
+              <div class="right">
+                <span class="pill">Computed frontend</span>
+              </div>
+            </div>
+            <div class="panel-bd">
+              <div class="table-wrap">
+                <table id="topTodayTable">
+                  <thead><tr><th>device_id</th><th>minutes</th><th>sessions</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <div class="small" style="margin-top:8px;">
+                Note: This uses fetched sessions (limit 1000). If you have more than 1000 sessions/day, backend needs a date-filter endpoint for perfect accuracy.
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -628,18 +586,18 @@
               <div class="input" style="min-width:180px;">
                 <span style="opacity:.8">📄</span>
                 <select id="licLimit">
-                  <option value="50">Limit 50 (fast)</option>
+                  <option value="50">Limit 50</option>
                   <option value="100" selected>Limit 100</option>
                   <option value="200">Limit 200</option>
-                  <option value="500">Limit 500 (slower)</option>
-                  <option value="1000">Limit 1000 (slowest)</option>
+                  <option value="500">Limit 500</option>
+                  <option value="1000">Limit 1000</option>
                 </select>
               </div>
               <button class="btn" id="licLoadBtn">Load</button>
               <button class="btn" id="licClearBtn">Clear</button>
             </div>
             <div class="right">
-              <span class="pill">Status is auto-active until expiry</span>
+              <span class="pill">Status always <strong>active</strong> until expiry</span>
             </div>
           </div>
 
@@ -678,11 +636,11 @@
               <div class="input" style="min-width:180px;">
                 <span style="opacity:.8">📄</span>
                 <select id="sesLimit">
-                  <option value="50">Limit 50 (fast)</option>
+                  <option value="50">Limit 50</option>
                   <option value="100" selected>Limit 100</option>
                   <option value="200">Limit 200</option>
-                  <option value="500">Limit 500 (slower)</option>
-                  <option value="1000">Limit 1000 (slowest)</option>
+                  <option value="500">Limit 500</option>
+                  <option value="1000">Limit 1000</option>
                 </select>
               </div>
               <button class="btn" id="sesLoadBtn">Load</button>
@@ -729,11 +687,11 @@
               <div class="input" style="min-width:180px;">
                 <span style="opacity:.8">📄</span>
                 <select id="evtLimit">
-                  <option value="50">Limit 50 (fast)</option>
+                  <option value="50">Limit 50</option>
                   <option value="100" selected>Limit 100</option>
                   <option value="200">Limit 200</option>
-                  <option value="500">Limit 500 (slower)</option>
-                  <option value="1000">Limit 1000 (slowest)</option>
+                  <option value="500">Limit 500</option>
+                  <option value="1000">Limit 1000</option>
                 </select>
               </div>
               <button class="btn" id="evtLoadBtn">Load</button>
@@ -770,7 +728,7 @@
               <div class="input" style="min-width:180px;">
                 <span style="opacity:.8">📄</span>
                 <select id="unLimit">
-                  <option value="50">Limit 50 (fast)</option>
+                  <option value="50">Limit 50</option>
                   <option value="100" selected>Limit 100</option>
                   <option value="200">Limit 200</option>
                   <option value="500">Limit 500</option>
@@ -796,7 +754,7 @@
     </div>
   </div>
 
-  <!-- License Modal (✅ status removed, expiry can't be past) -->
+  <!-- License Modal (status removed; expiry not past) -->
   <div class="modal" id="licModal">
     <div class="modal-card">
       <div class="modal-hd">
@@ -816,11 +774,11 @@
           </div>
           <div class="field"><label>expiry</label><input id="mExpiry" type="date" /></div>
         </div>
+        <div class="small" style="margin-top:10px;">
+          Status is always <b>active</b> until expiry.
+        </div>
         <div class="alert err" id="modalErr"></div>
         <div class="alert ok" id="modalOk"></div>
-        <div class="small" style="margin-top:8px;">
-          Status is automatically set to <b>active</b> and will expire by date.
-        </div>
       </div>
       <div class="modal-ft">
         <button class="btn primary" id="modalSave">Save</button>
@@ -831,18 +789,26 @@
 
 <script>
 (() => {
-  // ✅ Your Railway backend already set:
+  // ✅ Your Railway backend
   const API_BASE = "https://golf-licenses-production.up.railway.app";
 
   const CACHE_MS = 30000;
-  const DEFAULT_TIMEOUT = 12000;
+  const DEFAULT_TIMEOUT = 15000;
 
   const $ = (id) => document.getElementById(id);
 
   const state = {
     token: null,
     cache: new Map(),
-    last: { licenses: [], sessions: [], events: [], unauth: [], stats: null, dashboard: null },
+    last: {
+      licenses: [],
+      sessions: [],
+      events: [],
+      unauth: [],
+      stats: null,
+      dashboard: null,
+      analytics: null
+    },
     modalMode: "create",
     modalDevice: null
   };
@@ -854,11 +820,13 @@
     const dd = String(d.getDate()).padStart(2,'0');
     return `${yyyy}-${mm}-${dd}`;
   }
-
-  // expiry min today
-  function applyMinDate(){
-    const t = todayISO();
-    $("mExpiry").setAttribute("min", t);
+  function daysAgoISO(n){
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    return `${yyyy}-${mm}-${dd}`;
   }
 
   function setBackendLine(text){ $("svcLine").textContent = text; }
@@ -867,7 +835,8 @@
     el.textContent = msg || "";
     el.classList.remove("show","err","ok","loading");
     if(!msg) return;
-    el.classList.add("show", kind);
+    el.classList.add("show");
+    el.classList.add(kind);
   }
 
   function fmtDateTime(s){
@@ -876,13 +845,12 @@
   }
 
   function fmtDuration(sec){
-    if(sec === null || sec === undefined || sec === "") return "";
-    const n = Number(sec);
-    if(!Number.isFinite(n)) return String(sec);
-    if(n < 60) return `${n}s`;
-    const m = Math.floor(n/60), r = n % 60;
-    if(m < 60) return `${m}m ${r}s`;
-    const h = Math.floor(m/60), mm = m % 60;
+    const n = Number(sec || 0);
+    if(n < 60) return `${Math.round(n)}s`;
+    const m = Math.floor(n/60);
+    if(m < 60) return `${m}m`;
+    const h = Math.floor(m/60);
+    const mm = m % 60;
     return `${h}h ${mm}m`;
   }
 
@@ -924,10 +892,13 @@
         throw e;
       }
       return await res.json();
-    } finally { clearTimeout(t); }
+    } finally {
+      clearTimeout(t);
+    }
   }
 
   function cacheKey(name, params){ return name + "::" + JSON.stringify(params||{}); }
+
   async function cached(name, params, getter){
     const key = cacheKey(name, params);
     const now = Date.now();
@@ -947,6 +918,7 @@
     return u.toString();
   }
 
+  // Views
   const views = ["dash","licenses","sessions","events","unauth"];
   function showView(v){
     for(const name of views){
@@ -1000,6 +972,7 @@
     const tok = $("tok").value.trim();
     if(!pw){ showAlert($("loginErr"), "Password is required (local only)."); return; }
     if(!tok){ showAlert($("loginErr"), "Admin Token is required."); return; }
+
     try{
       $("loginBtn").textContent = "Logging in…";
       await pingBackend();
@@ -1010,7 +983,7 @@
       showView("dash");
       await loadDashboard(true);
     }catch(e){
-      showAlert($("loginErr"), e.status === 401 ? "Invalid token (401)." : ("Login failed: " + (e.message||"unknown")));
+      showAlert($("loginErr"), e.status === 401 ? "Invalid token (401)." : ("Login failed: " + (e.message || "unknown")));
     }finally{
       $("loginBtn").textContent = "Login";
     }
@@ -1033,126 +1006,239 @@
     });
   });
 
-  // Dashboard
-  async function loadDashboard(){
+  // ---------- FRONTEND ANALYTICS (today/weekly usage + today unauth+expired) ----------
+  function dateOnlyISO(dateStr){
+    if(!dateStr) return "";
+    try{
+      const d = new Date(dateStr);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const dd = String(d.getDate()).padStart(2,'0');
+      return `${yyyy}-${mm}-${dd}`;
+    }catch{return ""}
+  }
+
+  function computeAnalytics(licenses, sessions, events){
+    const today = todayISO();
+    const weekStart = daysAgoISO(6); // last 7 days inclusive (today + 6 previous)
+
+    // licensed device set (active licenses only ideally)
+    const licensed = new Set((licenses||[]).map(l => l.device_id).filter(Boolean));
+
+    let todaySec = 0;
+    let weekSec = 0;
+
+    const perDeviceToday = new Map(); // device_id -> {sec, sessions}
+    for(const s of (sessions||[])){
+      const device = s.device_id;
+      if(!device || !licensed.has(device)) continue;
+      const st = (s.status || "").toLowerCase();
+      if(st !== "ended") continue; // usage duration is reliable when ended
+      const startISO = dateOnlyISO(s.start_time);
+      const dur = Number(s.duration_sec || 0);
+      if(!Number.isFinite(dur) || dur <= 0) continue;
+
+      if(startISO === today){
+        todaySec += dur;
+        const obj = perDeviceToday.get(device) || {sec:0, sessions:0};
+        obj.sec += dur; obj.sessions += 1;
+        perDeviceToday.set(device, obj);
+      }
+      if(startISO >= weekStart && startISO <= today){
+        weekSec += dur;
+      }
+    }
+
+    // Today unauthorized + expired count from events results
+    let todayBad = 0;
+    for(const e of (events||[])){
+      const iso = dateOnlyISO(e.created_at);
+      if(iso !== today) continue;
+      const r = (e.result || "").toLowerCase();
+      if(r === "unauthorised" || r === "unauthorized" || r === "expired" || r === "inactive"){
+        todayBad += 1;
+      }
+    }
+
+    // Top devices today by minutes
+    const top = [...perDeviceToday.entries()]
+      .map(([device, obj]) => ({device_id: device, minutes: Math.round(obj.sec/60), sessions: obj.sessions, sec: obj.sec}))
+      .sort((a,b) => b.sec - a.sec)
+      .slice(0, 15);
+
+    return { todaySec, weekSec, todayBad, top };
+  }
+
+  function renderTopToday(top){
+    const tb = $("topTodayTable").querySelector("tbody");
+    tb.innerHTML = "";
+    for(const r of (top||[])){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id)}</td>
+        <td data-label="minutes">${escapeHtml(String(r.minutes))}</td>
+        <td data-label="sessions">${escapeHtml(String(r.sessions))}</td>
+      `;
+      tb.appendChild(tr);
+    }
+  }
+
+  // Dashboard loads: stats + mini lists + analytics (licenses+sessions+events)
+  async function loadDashboard(force){
     showAlert($("dashErr"), "");
     $("dashLoading").classList.add("show");
     $("statCards").style.display = "none";
+    $("calcCards").style.display = "none";
+
     try{
+      // base dashboard (fast)
       const statsP = cached("stats", {}, () => fetchJSON(authedUrl("/admin/stats")));
       const unauthP = cached("unauth-mini", {limit: 10}, () => fetchJSON(authedUrl("/admin/unauthorised", {limit: 10})));
-      const sesP = cached("ses-mini", {limit: 10}, () => fetchJSON(authedUrl("/admin/sessions", {limit: 10})));
-      const evtP = cached("evt-mini", {limit: 10}, () => fetchJSON(authedUrl("/admin/events", {limit: 10})));
+      const sesMiniP = cached("ses-mini", {limit: 10}, () => fetchJSON(authedUrl("/admin/sessions", {limit: 10})));
+      const evtMiniP = cached("evt-mini", {limit: 10}, () => fetchJSON(authedUrl("/admin/events", {limit: 10})));
 
-      const [stats, unauth, sessions, events] = await Promise.all([statsP, unauthP, sesP, evtP]);
+      // analytics (needs more rows)
+      const licAllP = cached("lic-all", {limit: 1000}, () => fetchJSON(authedUrl("/admin/licenses", {limit: 1000})));
+      const sesAllP = cached("ses-all", {limit: 1000}, () => fetchJSON(authedUrl("/admin/sessions", {limit: 1000})));
+      const evtAllP = cached("evt-all", {limit: 1000}, () => fetchJSON(authedUrl("/admin/events", {limit: 1000})));
+
+      const [stats, unauth, sessionsMini, eventsMini, licensesAll, sessionsAll, eventsAll] =
+        await Promise.all([statsP, unauthP, sesMiniP, evtMiniP, licAllP, sesAllP, evtAllP]);
 
       state.last.stats = stats;
-      state.last.dashboard = {stats, unauth, sessions, events};
+      state.last.dashboard = {stats, unauth, sessionsMini, eventsMini};
+      state.last.licenses = licensesAll || [];
+      state.last.sessions = sessionsAll || [];
+      state.last.events = eventsAll || [];
 
+      // stats cards
       $("cTotal").textContent = stats.total ?? 0;
       $("cActive").textContent = stats.active ?? 0;
       $("cExpired").textContent = stats.expired ?? 0;
       $("cLite").textContent = stats.lite ?? 0;
       $("cPremium").textContent = stats.premium ?? 0;
 
+      // lists
       fillDashUnauth(unauth);
-      fillDashSessions(sessions);
-      fillDashEvents(events);
+      fillDashSessions(sessionsMini);
+      fillDashEvents(eventsMini);
+
+      // analytics
+      const analytics = computeAnalytics(licensesAll, sessionsAll, eventsAll);
+      state.last.analytics = analytics;
+
+      $("cTodayUsage").textContent = fmtDuration(analytics.todaySec);
+      $("cWeekUsage").textContent = fmtDuration(analytics.weekSec);
+      $("cTodayBad").textContent = String(analytics.todayBad);
+
+      renderTopToday(analytics.top);
 
       $("statCards").style.display = "grid";
+      $("calcCards").style.display = "grid";
       $("dashLoading").classList.remove("show");
     }catch(e){
       $("dashLoading").classList.remove("show");
-      if(e.status === 401){ showAlert($("dashErr"), "Unauthorized. Logging out…"); setTimeout(logout, 800); return; }
-      showAlert($("dashErr"), "Failed to load dashboard: " + (e.message||"unknown"));
+      if(e.status === 401){
+        showAlert($("dashErr"), "Unauthorized (token invalid). Logging out…", "err");
+        setTimeout(logout, 800);
+        return;
+      }
+      showAlert($("dashErr"), "Failed to load dashboard: " + (e.message || "unknown error"), "err");
     }
   }
 
   function fillDashUnauth(rows){
     const tb = $("dashUnauthTable").querySelector("tbody");
     tb.innerHTML = "";
-    (rows||[]).forEach(r => {
+    for(const r of rows || []){
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
         <td data-label="result">${tagResult(r.result)}</td>
         <td data-label="time">${escapeHtml(fmtDateTime(r.created_at))}</td>
       `;
       tb.appendChild(tr);
-    });
+    }
   }
+
   function fillDashSessions(rows){
     const tb = $("dashSessionsTable").querySelector("tbody");
     tb.innerHTML = "";
-    (rows||[]).forEach(r => {
+    for(const r of rows || []){
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
         <td data-label="status">${tagSessionStatus(r.status)}</td>
         <td data-label="duration">${escapeHtml(fmtDuration(r.duration_sec))}</td>
         <td data-label="start">${escapeHtml(fmtDateTime(r.start_time))}</td>
       `;
       tb.appendChild(tr);
-    });
+    }
   }
+
   function fillDashEvents(rows){
     const tb = $("dashEventsTable").querySelector("tbody");
     tb.innerHTML = "";
-    (rows||[]).forEach(r => {
+    for(const r of rows || []){
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
-        <td data-label="event">${escapeHtml(r.event||"")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
+        <td data-label="event">${escapeHtml(r.event || "")}</td>
         <td data-label="result">${tagResult(r.result)}</td>
         <td data-label="time">${escapeHtml(fmtDateTime(r.created_at))}</td>
       `;
       tb.appendChild(tr);
-    });
+    }
   }
 
   $("dashRefreshMini").addEventListener("click", async () => {
-    [...state.cache.keys()].forEach(k => {
-      if(k.startsWith("unauth-mini") || k.startsWith("ses-mini") || k.startsWith("evt-mini")) state.cache.delete(k);
-    });
-    await loadDashboard();
+    state.cache.clear();
+    await loadDashboard(true);
   });
 
   $("dashExportJson").addEventListener("click", () => {
-    download(JSON.stringify(state.last.dashboard || {}, null, 2), "dashboard.json", "application/json");
+    const payload = {
+      dashboard: state.last.dashboard || {},
+      analytics: state.last.analytics || {}
+    };
+    download(JSON.stringify(payload, null, 2), "dashboard.json", "application/json");
   });
 
   $("quickLookupBtn").addEventListener("click", async () => {
     showAlert($("quickErr"), "");
     showAlert($("quickOk"), "");
     const device = $("quickDevice").value.trim();
-    if(!device){ showAlert($("quickErr"), "Enter a device_id first."); return; }
+    if(!device){ showAlert($("quickErr"), "Enter a device_id first.", "err"); return; }
+
     try{
       const licP = fetchJSON(authedUrl("/admin/licenses", {device_id: device, limit: 1}));
       const evtP = fetchJSON(authedUrl("/admin/events", {device_id: device, limit: 30}));
       const sesP = fetchJSON(authedUrl("/admin/sessions", {device_id: device, limit: 30}));
       const [lic, evts, sess] = await Promise.all([licP, evtP, sesP]);
+
       const licRow = (lic && lic[0]) ? lic[0] : null;
-      showAlert($("quickOk"),
-        licRow
-          ? `Found: ${licRow.username} • ${licRow.level} • expiry ${licRow.expiry} • ${licRow.status}`
-          : `No license found for ${device}`,
-        "ok"
-      );
+      const msg = licRow
+        ? `Found license: ${licRow.username} • ${licRow.level} • expiry ${licRow.expiry} • ${licRow.status}`
+        : `No license found for ${device}`;
+
+      showAlert($("quickOk"), msg, "ok");
       fillDashEvents(evts);
       fillDashSessions(sess);
+
     }catch(e){
-      showAlert($("quickErr"), "Lookup failed: " + (e.message||"unknown"));
+      showAlert($("quickErr"), "Lookup failed: " + (e.message || "unknown error"), "err");
     }
   });
 
-  // Licenses
+  // Licenses tab
   async function loadLicenses(){
     showAlert($("licErr"), "");
     $("licLoading").classList.add("show");
     const device = $("licFilterDevice").value.trim();
     const limit = device ? 1 : Number($("licLimit").value || 100);
+
     try{
-      const data = await cached("licenses", {device, limit}, () =>
+      const data = await cached("licenses-tab", {device, limit}, () =>
         fetchJSON(authedUrl("/admin/licenses", {device_id: device || undefined, limit}))
       );
       state.last.licenses = data || [];
@@ -1160,21 +1246,21 @@
       $("licLoading").classList.remove("show");
     }catch(e){
       $("licLoading").classList.remove("show");
-      if(e.status === 401){ showAlert($("licErr"), "Unauthorized. Logging out…"); setTimeout(logout, 800); return; }
-      showAlert($("licErr"), "Failed to load licenses: " + (e.message||"unknown"));
+      if(e.status === 401){ showAlert($("licErr"), "Unauthorized. Logging out…", "err"); setTimeout(logout, 800); return; }
+      showAlert($("licErr"), "Failed to load licenses: " + (e.message || "unknown"), "err");
     }
   }
 
   function renderLicenses(rows){
     const tb = $("licTable").querySelector("tbody");
     tb.innerHTML = "";
-    (rows||[]).forEach(r => {
+    for(const r of rows || []){
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
-        <td data-label="username">${escapeHtml(r.username||"")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
+        <td data-label="username">${escapeHtml(r.username || "")}</td>
         <td data-label="level">${tagLevel(r.level)}</td>
-        <td class="mono" data-label="expiry">${escapeHtml(r.expiry||"")}</td>
+        <td class="mono" data-label="expiry">${escapeHtml(r.expiry || "")}</td>
         <td data-label="status">${tagStatus(r.status, r.expiry)}</td>
         <td data-label="actions">
           <button class="rowbtn" data-act="edit" data-id="${escapeAttr(r.device_id)}">Edit</button>
@@ -1182,34 +1268,26 @@
         </td>
       `;
       tb.appendChild(tr);
-    });
+    }
     tb.querySelectorAll("button[data-act='edit']").forEach(b => b.addEventListener("click", () => openEdit(b.dataset.id)));
     tb.querySelectorAll("button[data-act='del']").forEach(b => b.addEventListener("click", () => doDelete(b.dataset.id)));
   }
 
-  $("licLoadBtn").addEventListener("click", () => {
-    const device = $("licFilterDevice").value.trim();
-    const limit = device ? 1 : Number($("licLimit").value || 100);
-    state.cache.delete(cacheKey("licenses", {device, limit}));
-    loadLicenses();
-  });
-  $("licClearBtn").addEventListener("click", () => {
-    $("licFilterDevice").value = "";
-    state.cache.clear();
-    loadLicenses();
-  });
+  $("licLoadBtn").addEventListener("click", () => { state.cache.clear(); loadLicenses(); });
+  $("licClearBtn").addEventListener("click", () => { $("licFilterDevice").value=""; state.cache.clear(); loadLicenses(); });
 
   $("licExportCsv").addEventListener("click", () => download(tableToCSV($("licTable")), "licenses.csv", "text/csv"));
-  $("licExportJson").addEventListener("click", () => download(JSON.stringify(state.last.licenses||[], null, 2), "licenses.json", "application/json"));
+  $("licExportJson").addEventListener("click", () => download(JSON.stringify(state.last.licenses || [], null, 2), "licenses.json", "application/json"));
 
-  // Sessions
+  // Sessions tab
   async function loadSessions(){
     showAlert($("sesErr"), "");
     $("sesLoading").classList.add("show");
     const device = $("sesDevice").value.trim();
     const limit = Number($("sesLimit").value || 100);
+
     try{
-      const data = await cached("sessions", {device, limit}, () =>
+      const data = await cached("sessions-tab", {device, limit}, () =>
         fetchJSON(authedUrl("/admin/sessions", {device_id: device || undefined, limit}))
       );
       state.last.sessions = data || [];
@@ -1217,50 +1295,45 @@
       $("sesLoading").classList.remove("show");
     }catch(e){
       $("sesLoading").classList.remove("show");
-      if(e.status === 401){ showAlert($("sesErr"), "Unauthorized. Logging out…"); setTimeout(logout, 800); return; }
-      showAlert($("sesErr"), "Failed to load sessions: " + (e.message||"unknown"));
+      if(e.status === 401){ showAlert($("sesErr"), "Unauthorized. Logging out…", "err"); setTimeout(logout, 800); return; }
+      showAlert($("sesErr"), "Failed to load sessions: " + (e.message || "unknown"), "err");
     }
   }
+
   function renderSessions(rows){
     const tb = $("sesTable").querySelector("tbody");
     tb.innerHTML = "";
-    (rows||[]).forEach(r => {
+    for(const r of rows || []){
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="session_id">${escapeHtml(r.session_id||"")}</td>
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
+        <td class="mono" data-label="session_id">${escapeHtml(r.session_id || "")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
         <td data-label="level">${tagLevel(r.level)}</td>
         <td data-label="start">${escapeHtml(fmtDateTime(r.start_time))}</td>
         <td data-label="end">${escapeHtml(fmtDateTime(r.end_time))}</td>
         <td data-label="status">${tagSessionStatus(r.status)}</td>
-        <td class="mono" data-label="duration_sec">${escapeHtml(String(r.duration_sec ?? ""))}</td>
+        <td data-label="duration_sec" class="mono">${escapeHtml(String(r.duration_sec ?? ""))}</td>
       `;
       tb.appendChild(tr);
-    });
+    }
   }
-  $("sesLoadBtn").addEventListener("click", () => {
-    const device = $("sesDevice").value.trim();
-    const limit = Number($("sesLimit").value || 100);
-    state.cache.delete(cacheKey("sessions", {device, limit}));
-    loadSessions();
-  });
-  $("sesClearBtn").addEventListener("click", () => {
-    $("sesDevice").value = "";
-    state.cache.clear();
-    loadSessions();
-  });
-  $("sesExportCsv").addEventListener("click", () => download(tableToCSV($("sesTable")), "sessions.csv", "text/csv"));
-  $("sesExportJson").addEventListener("click", () => download(JSON.stringify(state.last.sessions||[], null, 2), "sessions.json", "application/json"));
 
-  // Events
+  $("sesLoadBtn").addEventListener("click", () => { state.cache.clear(); loadSessions(); });
+  $("sesClearBtn").addEventListener("click", () => { $("sesDevice").value=""; state.cache.clear(); loadSessions(); });
+
+  $("sesExportCsv").addEventListener("click", () => download(tableToCSV($("sesTable")), "sessions.csv", "text/csv"));
+  $("sesExportJson").addEventListener("click", () => download(JSON.stringify(state.last.sessions || [], null, 2), "sessions.json", "application/json"));
+
+  // Events tab
   async function loadEvents(){
     showAlert($("evtErr"), "");
     $("evtLoading").classList.add("show");
     const device = $("evtDevice").value.trim();
     const date = $("evtDate").value;
     const limit = Number($("evtLimit").value || 100);
+
     try{
-      const data = await cached("events", {device, date, limit}, () =>
+      const data = await cached("events-tab", {device, date, limit}, () =>
         fetchJSON(authedUrl("/admin/events", {device_id: device || undefined, date: date || undefined, limit}))
       );
       state.last.events = data || [];
@@ -1268,48 +1341,41 @@
       $("evtLoading").classList.remove("show");
     }catch(e){
       $("evtLoading").classList.remove("show");
-      if(e.status === 401){ showAlert($("evtErr"), "Unauthorized. Logging out…"); setTimeout(logout, 800); return; }
-      showAlert($("evtErr"), "Failed to load events: " + (e.message||"unknown"));
+      if(e.status === 401){ showAlert($("evtErr"), "Unauthorized. Logging out…", "err"); setTimeout(logout, 800); return; }
+      showAlert($("evtErr"), "Failed to load events: " + (e.message || "unknown"), "err");
     }
   }
+
   function renderEvents(rows){
     const tb = $("evtTable").querySelector("tbody");
     tb.innerHTML = "";
-    (rows||[]).forEach(r => {
+    for(const r of rows || []){
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td class="mono" data-label="id">${escapeHtml(String(r.id ?? ""))}</td>
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
-        <td data-label="event">${escapeHtml(r.event||"")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
+        <td data-label="event">${escapeHtml(r.event || "")}</td>
         <td data-label="result">${tagResult(r.result)}</td>
         <td data-label="created_at">${escapeHtml(fmtDateTime(r.created_at))}</td>
       `;
       tb.appendChild(tr);
-    });
+    }
   }
-  $("evtLoadBtn").addEventListener("click", () => {
-    const device = $("evtDevice").value.trim();
-    const date = $("evtDate").value;
-    const limit = Number($("evtLimit").value || 100);
-    state.cache.delete(cacheKey("events", {device, date, limit}));
-    loadEvents();
-  });
-  $("evtClearBtn").addEventListener("click", () => {
-    $("evtDevice").value = "";
-    $("evtDate").value = "";
-    state.cache.clear();
-    loadEvents();
-  });
-  $("evtExportCsv").addEventListener("click", () => download(tableToCSV($("evtTable")), "events.csv", "text/csv"));
-  $("evtExportJson").addEventListener("click", () => download(JSON.stringify(state.last.events||[], null, 2), "events.json", "application/json"));
 
-  // Unauth
+  $("evtLoadBtn").addEventListener("click", () => { state.cache.clear(); loadEvents(); });
+  $("evtClearBtn").addEventListener("click", () => { $("evtDevice").value=""; $("evtDate").value=""; state.cache.clear(); loadEvents(); });
+
+  $("evtExportCsv").addEventListener("click", () => download(tableToCSV($("evtTable")), "events.csv", "text/csv"));
+  $("evtExportJson").addEventListener("click", () => download(JSON.stringify(state.last.events || [], null, 2), "events.json", "application/json"));
+
+  // Unauthorized tab
   async function loadUnauth(){
     showAlert($("unErr"), "");
     $("unLoading").classList.add("show");
     const limit = Number($("unLimit").value || 100);
+
     try{
-      const data = await cached("unauth", {limit}, () =>
+      const data = await cached("unauth-tab", {limit}, () =>
         fetchJSON(authedUrl("/admin/unauthorised", {limit}))
       );
       state.last.unauth = data || [];
@@ -1317,35 +1383,38 @@
       $("unLoading").classList.remove("show");
     }catch(e){
       $("unLoading").classList.remove("show");
-      if(e.status === 401){ showAlert($("unErr"), "Unauthorized. Logging out…"); setTimeout(logout, 800); return; }
-      showAlert($("unErr"), "Failed to load unauthorized: " + (e.message||"unknown"));
+      if(e.status === 401){ showAlert($("unErr"), "Unauthorized. Logging out…", "err"); setTimeout(logout, 800); return; }
+      showAlert($("unErr"), "Failed to load unauthorized: " + (e.message || "unknown"), "err");
     }
   }
+
   function renderUnauth(rows){
     const tb = $("unTable").querySelector("tbody");
     tb.innerHTML = "";
-    (rows||[]).forEach(r => {
+    for(const r of rows || []){
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono" data-label="device_id">${escapeHtml(r.device_id||"")}</td>
-        <td data-label="event">${escapeHtml(r.event||"")}</td>
+        <td class="mono" data-label="device_id">${escapeHtml(r.device_id || "")}</td>
+        <td data-label="event">${escapeHtml(r.event || "")}</td>
         <td data-label="result">${tagResult(r.result)}</td>
         <td data-label="created_at">${escapeHtml(fmtDateTime(r.created_at))}</td>
       `;
       tb.appendChild(tr);
-    });
+    }
   }
-  $("unLoadBtn").addEventListener("click", () => {
-    const limit = Number($("unLimit").value || 100);
-    state.cache.delete(cacheKey("unauth", {limit}));
-    loadUnauth();
-  });
-  $("unExportCsv").addEventListener("click", () => download(tableToCSV($("unTable")), "unauthorised.csv", "text/csv"));
-  $("unExportJson").addEventListener("click", () => download(JSON.stringify(state.last.unauth||[], null, 2), "unauthorised.json", "application/json"));
 
-  // Modal (✅ status removed, always active)
+  $("unLoadBtn").addEventListener("click", () => { state.cache.clear(); loadUnauth(); });
+
+  $("unExportCsv").addEventListener("click", () => download(tableToCSV($("unTable")), "unauthorised.csv", "text/csv"));
+  $("unExportJson").addEventListener("click", () => download(JSON.stringify(state.last.unauth || [], null, 2), "unauthorised.json", "application/json"));
+
+  // Modal create/edit: status removed; expiry can't be past; always active
+  function applyExpiryMin(){
+    $("mExpiry").min = todayISO();
+  }
+
   function openCreate(){
-    applyMinDate();
+    applyExpiryMin();
     state.modalMode = "create";
     state.modalDevice = null;
     $("modalTitle").textContent = "Add License";
@@ -1360,7 +1429,7 @@
   }
 
   async function openEdit(device){
-    applyMinDate();
+    applyExpiryMin();
     state.modalMode = "edit";
     state.modalDevice = device;
     $("modalTitle").textContent = "Edit License";
@@ -1368,21 +1437,16 @@
     showAlert($("modalOk"), "");
     $("licModal").classList.add("show");
     try{
-      const row = (state.last.licenses || []).find(x => x.device_id === device);
-      let lic = row;
-      if(!lic){
-        const data = await fetchJSON(authedUrl("/admin/licenses", {device_id: device, limit: 1}));
-        lic = data && data[0];
-      }
+      const data = await fetchJSON(authedUrl("/admin/licenses", {device_id: device, limit: 1}));
+      const lic = data && data[0];
       if(!lic) throw new Error("License not found");
-
       $("mDevice").value = lic.device_id || "";
       $("mUser").value = lic.username || "";
       $("mLevel").value = (lic.level || "").toLowerCase();
       $("mExpiry").value = lic.expiry || "";
       $("mDevice").disabled = true;
     }catch(e){
-      showAlert($("modalErr"), "Could not load license: " + (e.message || "unknown"));
+      showAlert($("modalErr"), "Could not load license: " + (e.message || "unknown"), "err");
     }
   }
 
@@ -1391,8 +1455,8 @@
     try{
       await fetchJSON(authedUrl("/admin/licenses", {device_id: device}), { method:"DELETE" });
       state.cache.clear();
+      await loadDashboard(true);
       await loadLicenses();
-      await loadDashboard();
     }catch(e){
       alert("Delete failed: " + (e.message || "unknown"));
     }
@@ -1406,25 +1470,21 @@
   $("modalSave").addEventListener("click", async () => {
     showAlert($("modalErr"), "");
     showAlert($("modalOk"), "");
-
     const device = $("mDevice").value.trim();
     const username = $("mUser").value.trim();
     const level = $("mLevel").value;
     const expiry = $("mExpiry").value;
 
     if(!device || !username || !level || !expiry){
-      showAlert($("modalErr"), "All fields are required.");
+      showAlert($("modalErr"), "All fields are required.", "err");
       return;
     }
 
-    // ✅ expiry cannot be past
-    const t = todayISO();
-    if(expiry < t){
-      showAlert($("modalErr"), "Expiry date cannot be in the past.");
+    if(expiry < todayISO()){
+      showAlert($("modalErr"), "Expiry date cannot be in the past.", "err");
       return;
     }
 
-    // ✅ always active
     const payload = { device_id: device, username, level, expiry, status: "active" };
 
     try{
@@ -1435,21 +1495,19 @@
           headers: {"Content-Type":"application/json"},
           body: JSON.stringify(payload)
         });
-        showAlert($("modalOk"), "License created.", "ok");
       }else{
         await fetchJSON(authedUrl("/admin/licenses", {device_id: state.modalDevice || device}), {
           method:"PUT",
           headers: {"Content-Type":"application/json"},
           body: JSON.stringify(payload)
         });
-        showAlert($("modalOk"), "License updated.", "ok");
       }
       $("licModal").classList.remove("show");
       state.cache.clear();
+      await loadDashboard(true);
       await loadLicenses();
-      await loadDashboard();
     }catch(e){
-      showAlert($("modalErr"), "Save failed: " + (e.message || "unknown"));
+      showAlert($("modalErr"), "Save failed: " + (e.message || "unknown"), "err");
     }finally{
       $("modalSave").textContent = "Save";
     }
@@ -1461,12 +1519,14 @@
     const end = new Date(String(expiry) + "T23:59:59.999Z");
     return end.getTime() < Date.now();
   }
+
   function tagLevel(level){
     const v = (level || "").toLowerCase();
     if(v === "premium") return `<span class="tag good">premium</span>`;
     if(v === "lite") return `<span class="tag">lite</span>`;
     return `<span class="tag warn">${escapeHtml(level||"unknown")}</span>`;
   }
+
   function tagSessionStatus(st){
     const v = (st || "").toLowerCase();
     if(v === "ended") return `<span class="tag good">ended</span>`;
@@ -1474,13 +1534,15 @@
     if(v === "aborted") return `<span class="tag bad">aborted</span>`;
     return `<span class="tag">${escapeHtml(st||"")}</span>`;
   }
+
   function tagResult(res){
     const v = (res || "").toLowerCase();
     if(v === "valid" || v === "ok") return `<span class="tag good">${escapeHtml(res)}</span>`;
     if(v === "expired") return `<span class="tag warn">${escapeHtml(res)}</span>`;
-    if(v === "unauthorised" || v === "inactive") return `<span class="tag bad">${escapeHtml(res)}</span>`;
+    if(v === "unauthorised" || v === "unauthorized" || v === "inactive") return `<span class="tag bad">${escapeHtml(res)}</span>`;
     return `<span class="tag">${escapeHtml(res || "")}</span>`;
   }
+
   function tagStatus(status, expiry){
     const st = (status || "").toLowerCase();
     const expired = isExpiredDate(expiry);
@@ -1494,19 +1556,9 @@
   }
   function escapeAttr(s){ return String(s ?? "").replace(/"/g, "&quot;"); }
 
-  // Export buttons
-  $("licExportCsv").addEventListener("click", () => download(tableToCSV($("licTable")), "licenses.csv", "text/csv"));
-  $("licExportJson").addEventListener("click", () => download(JSON.stringify(state.last.licenses||[], null, 2), "licenses.json", "application/json"));
-  $("sesExportCsv").addEventListener("click", () => download(tableToCSV($("sesTable")), "sessions.csv", "text/csv"));
-  $("sesExportJson").addEventListener("click", () => download(JSON.stringify(state.last.sessions||[], null, 2), "sessions.json", "application/json"));
-  $("evtExportCsv").addEventListener("click", () => download(tableToCSV($("evtTable")), "events.csv", "text/csv"));
-  $("evtExportJson").addEventListener("click", () => download(JSON.stringify(state.last.events||[], null, 2), "events.json", "application/json"));
-  $("unExportCsv").addEventListener("click", () => download(tableToCSV($("unTable")), "unauthorised.csv", "text/csv"));
-  $("unExportJson").addEventListener("click", () => download(JSON.stringify(state.last.unauth||[], null, 2), "unauthorised.json", "application/json"));
-
   // Startup
   (async function init(){
-    applyMinDate();
+    applyExpiryMin();
     setBackendLine("Connecting…");
     await pingBackend();
 
@@ -1517,7 +1569,7 @@
         await validateToken(saved);
         setLoggedIn(true);
         showView("dash");
-        await loadDashboard();
+        await loadDashboard(false);
       }catch{
         logout();
       }
@@ -1528,5 +1580,6 @@
   })();
 })();
 </script>
+</div>
 </body>
 </html>
